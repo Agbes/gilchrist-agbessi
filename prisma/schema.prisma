@@ -1,0 +1,199 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+
+
+
+//Section About
+model Hero {
+  id          Int      @id @default(autoincrement())
+  name        String
+  title       String
+  subtitle    String
+  description String
+
+  profile     Profile? @relation(fields: [profileId], references: [id])
+  profileId   Int?     @unique
+
+  skills      Skill[]  @relation("HeroSkills")
+}
+
+
+model Profile {
+  id          Int      @id @default(autoincrement())
+  imagePath   String
+  experience  Int 
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  hero        Hero?
+}
+
+model Skill {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  color       String
+  svgPath     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  heroId      Int?
+  hero        Hero?    @relation("HeroSkills", fields: [heroId], references: [id])
+}
+
+
+
+//Section compétences ou skills
+
+model Competence {
+  id          Int             @id @default(autoincrement())
+  title       String
+  description String
+  icon        String
+  color       String
+  tagColor    String
+  tags        TagCompetence[]
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+}
+
+model TagCompetence {
+  id            Int         @id @default(autoincrement())
+  name          String
+  competence    Competence  @relation(fields: [competenceId], references: [id])
+  competenceId  Int
+}
+
+
+
+//Section projects
+
+model Project {
+  id           Int           @id @default(autoincrement())
+  name         String
+  nature       String
+  description  String
+  imageUrl     String        // URL ou chemin de l'image (champ obligatoire)
+  technologies Technology[]  @relation("ProjectTechnologies")
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model Technology {
+  id           Int        @id @default(autoincrement())
+  name     String    @unique     // ✅ ici !
+  projects     Project[]  @relation("ProjectTechnologies")
+}
+
+
+//Section experience
+
+model Experience {
+  id          Int       @id @default(autoincrement())
+  name        String
+  periode     String
+  description String
+  lieu        String
+  imageUrl    String
+  iconType    String?    // champ optionnel
+  services    Service[]  @relation("ExperienceServices")
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+
+model Service {
+  id          Int          @id @default(autoincrement())
+  name        String       @unique
+  experiences Experience[] @relation("ExperienceServices")
+}
+
+
+
+//Blog
+
+model User {
+  id        Int       @id @default(autoincrement())
+  name      String
+  email     String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+
+//Articles
+
+model Topic {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  articles Article[]
+}
+
+model Article {
+  id          Int            @id @default(autoincrement())
+  slug        String         @unique
+  title       String
+  description String
+  date        DateTime       @default(now())
+  readTime    String
+  topicId     Int
+  topic       Topic    @relation(fields: [topicId], references: [id])
+  images      ArticleImage[]
+  tags        TagArticle[]   @relation("ArticleTags")  // <-- ajouté ici
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+model TagArticle {
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  articles  Article[]  @relation("ArticleTags")
+}
+
+
+model ArticleImage {
+  id        Int      @id @default(autoincrement())
+  url       String
+  article   Article  @relation(fields: [articleId], references: [id])
+  articleId Int
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  subject   String
+  message   String
+  createdAt DateTime @default(now())
+}
+
+
+model SocialPlatform {
+  id     Int    @id @default(autoincrement())
+  name   String @unique
+  icon   String
+  color  String
+  url    String
+}
+
+
+
+model ContactInfo {
+  id       Int     @id @default(autoincrement())
+  type     String
+  label    String
+  value    String
+  icon     String
+  color    String
+}
