@@ -1,3 +1,6 @@
+import Image from "next/image";
+import Link from "next/link";
+
 interface ProjectCardProps {
   name: string;
   nature: string;
@@ -17,9 +20,11 @@ export default function ProjectCard({
     <div className="bg-slate-900 rounded-xl overflow-hidden shadow-md card-hover">
       {/* ✅ Image en haut de la carte */}
       <div className="h-48 w-full overflow-hidden">
-        <img
+        <Image
           src={imageUrl}
           alt={name}
+          width={600}
+          height={300}
           className="object-cover w-full h-full transition-transform duration-300 hover:scale-105"
         />
       </div>
@@ -47,12 +52,12 @@ export default function ProjectCard({
         </div>
 
         <div className="flex space-x-3">
-          <a href="#" className="text-blue-400 hover:text-blue-300">
+          <Link href="#" className="text-blue-400 hover:text-blue-300">
             <i className="fas fa-external-link-alt"></i>
-          </a>
-          <a href="#" className="text-blue-400 hover:text-blue-300">
+          </Link>
+          <Link href="#" className="text-blue-400 hover:text-blue-300">
             <i className="fab fa-github"></i>
-          </a>
+          </Link>
         </div>
       </div>
     </div>

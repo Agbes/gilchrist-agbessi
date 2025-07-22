@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 interface Project {
   id: number;
@@ -108,10 +109,12 @@ export default function ProjectList() {
           {projects.map((project) => (
             <tr key={project.id} className="hover:bg-gray-50 border-b align-middle">
               <td className="py-3 px-4">
-                <img
+                <Image
                   src={project.imageUrl}
                   alt={project.name}
                   className="w-16 h-16 object-cover rounded"
+                  width={64}
+                  height={64}
                 />
               </td>
               <td className="py-3 px-4 font-medium">{project.name}</td>

@@ -22,7 +22,7 @@ async function main() {
   ]
 
   pers.map(async (person) => {
-   let admin = await prisma.user.upsert({
+   const admin = await prisma.user.upsert({
     where: { email: person.email },
     update: {},
     create: {

@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function NotFound() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
@@ -6,12 +8,12 @@ export default function NotFound() {
         <p className="text-xl text-gray-700 mb-6">
           Oups ! L’article que vous cherchez n’existe pas ou a été supprimé.
         </p>
-        <a
+        <Link
           href="/blog"
           className="inline-block bg-sky-700 hover:bg-sky-800 text-white px-6 py-3 rounded-lg transition"
         >
           Retour au blog
-        </a>
+        </Link>
       </div>
     </div>
   );

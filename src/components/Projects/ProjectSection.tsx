@@ -1,4 +1,5 @@
 // components/ProjectSection.tsx
+import Link from "next/link";
 import ProjectCard from "./ProjectCard";
 import prisma from "@/lib/prisma"; // 🔁 adapter le chemin selon ton projet
 
@@ -37,12 +38,12 @@ export default async function ProjectSection() {
         </div>
 
         <div className="text-center mt-16">
-          <a
+          <Link
             href="#"
             className="px-8 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-full hover:opacity-90 transition-opacity"
           >
             Voir tous mes projets
-          </a>
+          </Link>
         </div>
       </div>
     </section>

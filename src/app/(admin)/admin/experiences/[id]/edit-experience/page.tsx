@@ -6,6 +6,7 @@ import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ImagePlus } from "lucide-react";
+import Image from "next/image";
 
 const experienceSchema = z.object({
   name: z.string().min(1, "Nom requis"),
@@ -178,10 +179,12 @@ export default function EditExperience() {
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">Image actuelle</label>
           {currentImage && (
-            <img
+            <Image
               src={currentImage}
               alt="Image actuelle"
               className="w-32 h-32 object-cover rounded mb-2"
+              width={128}
+              height={128}
             />
           )}
 

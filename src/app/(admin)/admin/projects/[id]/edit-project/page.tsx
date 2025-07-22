@@ -7,6 +7,7 @@ import { ImagePlus } from "lucide-react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { projectSchema } from "@/lib/validation/articleSchema";
+import Image from "next/image";
 
 type ProjectForm = {
   name: string;
@@ -167,10 +168,12 @@ export default function EditProject() {
 
           {!currentImageUrl && !control._formValues?.image && null}
           {currentImageUrl && !control._formValues?.image && (
-            <img
+            <Image
               src={currentImageUrl}
               alt="Image actuelle"
               className="mt-4 w-48 h-32 object-cover rounded border"
+              width={192}
+              height={128}
             />
           )}
           {errors.image && <p className="text-red-600 text-sm mt-1">{errors.image.message}</p>}

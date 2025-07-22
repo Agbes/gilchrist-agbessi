@@ -3,7 +3,7 @@ import prisma from "@/lib/prisma";
 import { articleBodySchema } from "@/lib/validation/articleSchema";
 
 export async function GET(_: NextRequest, context: { params: { slug: string } }) {
-  const { slug } = await context.params;
+  const { slug } = context.params;
 
   if (!slug) {
     return NextResponse.json({ error: "Slug manquant" }, { status: 400 });
@@ -34,10 +34,8 @@ export async function GET(_: NextRequest, context: { params: { slug: string } })
   }
 }
 
-
-
 export async function DELETE(_: NextRequest, context: { params: { slug: string } }) {
-  const { slug } = await context.params;
+  const { slug } = context.params;
 
   try {
     const article = await prisma.article.findUnique({
@@ -66,9 +64,8 @@ export async function DELETE(_: NextRequest, context: { params: { slug: string }
   }
 }
 
-
 export async function PATCH(req: NextRequest, context: { params: { slug: string } }) {
-  const { slug } = await context.params;
+  const { slug } = context.params;
 
   try {
     const json = await req.json();
@@ -93,44 +90,6 @@ export async function PATCH(req: NextRequest, context: { params: { slug: string 
         date: date ? new Date(date) : undefined,
         topic: {
           connect: { id: Number(topicId) },
-        },
-      },
-    });
-
-    return NextResponse.json(article);
-  } catch (error) {
-    console.error("Erreur PATCH article:", error);
-    return NextResponse.json({ error: "Erreur lors de la mise à jour" }, { status: 500 });
-  }
-}
-  req: NextRequest,
-  { params }: { params: { slug: string } }
-) {
-  try {
-    const json = await req.json();
-
-    const parsed = articleBodySchema.safeParse(json);
-
-    if (!parsed.success) {
-      return NextResponse.json(
-        { error: "Données invalides", details: parsed.error.flatten() },
-        { status: 400 }
-      );
-    }
-
-    const { title, description, topicId, readTime, date } = parsed.data;
-
-    const article = await prisma.article.update({
-      where: { slug: params.slug },
-      data: {
-        title,
-        description,
-        readTime,
-        date: date ? new Date(date) : undefined,
-        topic: {
-          connect: {
-            id: Number(topicId),
-          },
         },
       },
     });

@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
 const images = [
@@ -28,7 +29,13 @@ export default function DaisyCarouselAutoplay() {
                     className={`carousel-item w-full aspect-[16/9] transition-opacity duration-1000 ${index === current ? 'opacity-100 relative' : 'opacity-0 absolute top-0 left-0'
                         }`}
                 >
-                    <img src={image} alt={`Slide ${index + 1}`} className="w-full h-full object-cover" />
+                    <Image
+                        src={image}
+                        alt={`Slide ${index + 1}`}
+                        width={1500}
+                        height={900}
+                        className="w-full h-full object-cover"
+                    />
                 </div>
             ))}
 

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 
 type Article = {
@@ -40,12 +41,14 @@ export default function ArticleView({ article }: Props) {
       {images.length > 0 && (
         <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {images.map((src, i) => (
-            <img
+            <Image
               key={i}
               src={src}
               alt={`Image ${i + 1} de l'article`}
               className="rounded-lg object-cover w-full h-48"
               loading="lazy"
+              width={600}
+              height={300}
             />
           ))}
         </section>

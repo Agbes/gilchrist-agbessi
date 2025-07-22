@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 interface Experience {
   id: number;
@@ -106,10 +107,12 @@ export default function ExperienceList() {
           {experiences.map((exp) => (
             <tr key={exp.id} className="hover:bg-gray-50 border-b align-middle">
               <td className="py-3 px-4">
-                <img
+                <Image
                   src={exp.imageUrl}
                   alt={exp.name}
                   className="w-16 h-16 object-cover rounded"
+                  width={64}
+                  height={64}
                 />
               </td>
               <td className="py-3 px-4 font-medium">{exp.name}</td>

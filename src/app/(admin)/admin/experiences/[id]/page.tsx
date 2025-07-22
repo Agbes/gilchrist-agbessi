@@ -4,6 +4,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 
 interface Experience {
   id: number;
@@ -44,10 +45,12 @@ export default function ViewExperience() {
   return (
     <div className="max-w-3xl mx-auto mt-10 bg-white p-8 rounded-2xl shadow-xl">
       <h1 className="text-2xl font-bold text-gray-800 mb-4">🧳 Détail de l'expérience</h1>
-      <img
+      <Image
         src={experience.imageUrl}
         alt={experience.name}
         className="w-full h-64 object-cover rounded-xl mb-6"
+        width={640}
+        height={256}
       />
 
       <div className="space-y-4">

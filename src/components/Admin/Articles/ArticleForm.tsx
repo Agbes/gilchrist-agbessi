@@ -6,6 +6,7 @@ import { z } from "zod";
 import { calculateReadTime } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { articleSchema } from "@/lib/validation/articleSchema";
+import Image from "next/image";
 
 type Topic = { id: number; name: string };
 type Props = {
@@ -168,11 +169,13 @@ export default function ArticleForm({
         <input type="file" multiple accept="image/*" onChange={handleImageChange} />
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
           {previews.map((src, i) => (
-            <img
+            <Image
               key={i}
               src={src}
               alt={`preview-${i}`}
               className="w-full h-32 object-cover rounded-md border"
+              width={200}
+              height={200}
             />
           ))}
         </div>

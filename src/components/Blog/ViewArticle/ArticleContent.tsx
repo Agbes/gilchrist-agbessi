@@ -18,10 +18,12 @@ export default function ArticleContent({ article }: ArticleContentProps) {
     <div className="lg:col-span-2 space-y-6">
       {/* Image principale */}
       {mainImage && (
-        <img
+        <Image
           src={mainImage.url}
           alt={article.title}
           className="w-full h-80 object-cover rounded-2xl shadow"
+          width={600}
+          height={300}
         />
       )}
 
@@ -50,7 +52,9 @@ export default function ArticleContent({ article }: ArticleContentProps) {
           <h2 className="text-xl font-semibold mb-4">Galerie</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {galleryImages.map((img, index) => (
-              <img
+              <Image
+                width={600}
+                height={300}
                 key={index}
                 src={img.url}
                 alt={`Image ${index + 2}`}
