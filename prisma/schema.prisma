@@ -123,13 +123,7 @@ model Service {
 
 //Blog
 
-model User {
-  id        Int       @id @default(autoincrement())
-  name      String
-  email     String    @unique
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-}
+
 
 
 //Articles
@@ -196,4 +190,54 @@ model ContactInfo {
   value    String
   icon     String
   color    String
+}
+
+
+
+
+// Admin
+
+// prisma/schema.prisma
+
+model User {
+  id            String   @id @default(cuid())
+  name          String?
+  email         String   @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?  // uniquement pour Credentials
+  role          Role     @default(USER)
+  accounts      Account[] // pour OAuth
+  sessions      Session[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? 
+  access_token      String? 
+  expires_at        Int?    
+  token_type        String? 
+  scope             String? 
+  id_token          String? 
+  session_state     String? 
+  user              User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum Role {
+  ADMIN
+  USER
 }

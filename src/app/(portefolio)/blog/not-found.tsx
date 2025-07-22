@@ -1,18 +1,18 @@
-// app/not-found.tsx
 export default function NotFound() {
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center bg-gray-100 px-4 text-center">
-      <h1 className="text-5xl font-bold text-red-600 mb-4">404</h1>
-      <h2 className="text-2xl font-semibold mb-2">Page introuvable</h2>
-      <p className="text-gray-600 mb-6">
-        Désolé, la page que vous cherchez n'existe pas ou a été supprimée.
-      </p>
-      <a
-        href="/"
-        className="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700 transition"
-      >
-        Retour à l'accueil
-      </a>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+      <div className="max-w-xl text-center">
+        <h1 className="text-5xl font-bold text-sky-700 mb-4">404</h1>
+        <p className="text-xl text-gray-700 mb-6">
+          Oups ! L’article que vous cherchez n’existe pas ou a été supprimé.
+        </p>
+        <a
+          href="/blog"
+          className="inline-block bg-sky-700 hover:bg-sky-800 text-white px-6 py-3 rounded-lg transition"
+        >
+          Retour au blog
+        </a>
+      </div>
     </div>
   );
 }
