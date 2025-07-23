@@ -1,13 +1,11 @@
 "use client";
 
 import { LogOut } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useSession,signOut } from "next-auth/react";
+import { signOut } from "next-auth/react";
 
 
 
 export default function LogoutButton() {
-    const { data: session } = useSession()
 
 
   return (

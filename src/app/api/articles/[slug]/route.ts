@@ -50,10 +50,15 @@ export async function DELETE(_: NextRequest, context: { params: { slug: string }
     await prisma.article.delete({ where: { slug } });
 
     return NextResponse.json({ message: "Article supprimé avec succès" });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Erreur suppression article :", error);
 
-    if (error.code === "P2003") {
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      (error as { code?: string }).code === "P2003"
+    ) {
       return NextResponse.json(
         { error: "Impossible de supprimer l’article car il est référencé ailleurs." },
         { status: 400 }
@@ -62,6 +67,7 @@ export async function DELETE(_: NextRequest, context: { params: { slug: string }
 
     return NextResponse.json({ error: "Erreur lors de la suppression" }, { status: 500 });
   }
+
 }
 
 export async function PATCH(req: NextRequest, context: { params: { slug: string } }) {

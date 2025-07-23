@@ -21,7 +21,7 @@ export default async function ProfilPage({ params }: Params) {
   if (!hero) {
     return (
       <div className="max-w-4xl mx-auto p-6 text-center text-red-600">
-        Profil non trouvé pour l'id : <strong>{id}</strong>
+        Profil non trouvé pour l&apos;id : <strong>{id}</strong>
       </div>
     );
   }

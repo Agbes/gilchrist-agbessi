@@ -22,8 +22,12 @@ export default function MessageList() {
         const res = await fetch("/api/messages");
         const data = await res.json();
         setMessages(data);
-      } catch (e) {
-        setError("Erreur de chargement des messages");
+      } catch (e: unknown) {
+        if (e instanceof Error) {
+          setError(e.message);
+        } else {
+          setError("Erreur de chargement des messages");
+        }
       } finally {
         setLoading(false);
       }
@@ -41,8 +45,12 @@ export default function MessageList() {
       } else {
         alert("Échec de la suppression.");
       }
-    } catch (error) {
-      alert("Erreur lors de la suppression.");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        alert(`Erreur lors de la suppression : ${error.message}`);
+      } else {
+        alert("Erreur lors de la suppression.");
+      }
     }
   };
 

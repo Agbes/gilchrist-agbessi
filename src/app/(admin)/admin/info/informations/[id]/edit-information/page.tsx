@@ -26,7 +26,6 @@ export default function EditInformationForm() {
         register,
         handleSubmit,
         setValue,
-        watch,
         formState: { errors },
     } = useForm<ContactInfoFormData>({
         resolver: zodResolver(contactInfoSchema),
@@ -39,7 +38,6 @@ export default function EditInformationForm() {
         },
     });
 
-    const selectedType = watch("type");
 
     useEffect(() => {
         async function fetchInfo() {

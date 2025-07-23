@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LogOut, User, LayoutDashboard, BadgeCheck, Code2, Briefcase, Info, Mail } from "lucide-react";
+import { User, LayoutDashboard, BadgeCheck, Code2, Briefcase, Info, Mail } from "lucide-react";
 import LogoutButton from "./LogoutButton";
 
 export default function Sidebar() {

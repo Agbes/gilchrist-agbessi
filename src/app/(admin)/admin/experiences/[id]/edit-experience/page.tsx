@@ -16,7 +16,7 @@ const experienceSchema = z.object({
   services: z.string().optional(),
   image: z
     .any()
-    .optional(), 
+    .optional(),
 });
 
 type ExperienceForm = z.infer<typeof experienceSchema>;
@@ -61,11 +61,16 @@ export default function EditExperience() {
         });
 
         setCurrentImage(data.imageUrl || null);
-      } catch (err) {
-        setError("Erreur de chargement");
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("Erreur de chargement");
+        }
       } finally {
         setLoading(false);
       }
+
     }
 
     fetchExperience();
@@ -117,9 +122,8 @@ export default function EditExperience() {
           <input
             {...register("name")}
             type="text"
-            className={`w-full border rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              errors.name ? "border-red-500" : "border-gray-300"
-            }`}
+            className={`w-full border rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.name ? "border-red-500" : "border-gray-300"
+              }`}
             placeholder="Nom de l'expérience"
           />
           {errors.name && <p className="text-red-600 text-sm mt-1">{errors.name.message}</p>}
@@ -130,9 +134,8 @@ export default function EditExperience() {
           <input
             {...register("periode")}
             type="text"
-            className={`w-full border rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              errors.periode ? "border-red-500" : "border-gray-300"
-            }`}
+            className={`w-full border rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.periode ? "border-red-500" : "border-gray-300"
+              }`}
             placeholder="Ex: 2022 - 2023"
           />
           {errors.periode && <p className="text-red-600 text-sm mt-1">{errors.periode.message}</p>}
@@ -143,9 +146,8 @@ export default function EditExperience() {
           <input
             {...register("lieu")}
             type="text"
-            className={`w-full border rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              errors.lieu ? "border-red-500" : "border-gray-300"
-            }`}
+            className={`w-full border rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.lieu ? "border-red-500" : "border-gray-300"
+              }`}
             placeholder="Ex: Paris, France"
           />
           {errors.lieu && <p className="text-red-600 text-sm mt-1">{errors.lieu.message}</p>}
@@ -156,9 +158,8 @@ export default function EditExperience() {
           <textarea
             {...register("description")}
             rows={4}
-            className={`w-full border rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              errors.description ? "border-red-500" : "border-gray-300"
-            }`}
+            className={`w-full border rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.description ? "border-red-500" : "border-gray-300"
+              }`}
             placeholder="Décris l'expérience brièvement..."
           />
           {errors.description && (

@@ -25,7 +25,6 @@ export default function NewInformation() {
     register,
     handleSubmit,
     setValue,
-    watch,
     formState: { errors },
   } = useForm<ContactInfoFormData>({
     resolver: zodResolver(contactInfoSchema),
@@ -38,7 +37,6 @@ export default function NewInformation() {
     },
   });
 
-  const selectedType = watch("type");
 
   const handleTypeChange = (type: string) => {
     const preset = contactPresets.find((p) => p.type === type);

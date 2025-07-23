@@ -37,8 +37,7 @@ export default function EditProfilForm() {
     handleSubmit,
     reset,
     control,
-    setValue,
-    formState: { errors, isSubmitting },
+    formState: {isSubmitting },
   } = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {

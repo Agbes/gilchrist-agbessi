@@ -4,7 +4,7 @@ import { saveUploadedFiles } from "@/lib/saveUploadedFiles";
 import { articleBodySchema } from "@/lib/validation/articleSchema";
 
 // GET: récupérer tous les articles
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const articles = await prisma.article.findMany({
       include: { images: true },
@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
     });
 
     return NextResponse.json(articles);
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: "Erreur lors de la récupération des articles" },
       { status: 500 }

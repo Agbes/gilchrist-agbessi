@@ -6,8 +6,9 @@ export default function NotFound() {
       <div className="max-w-xl text-center">
         <h1 className="text-5xl font-bold text-sky-700 mb-4">404</h1>
         <p className="text-xl text-gray-700 mb-6">
-          Oups ! L’article que vous cherchez n’existe pas ou a été supprimé.
+          Oups ! L&apos;article que vous cherchez n&apos;existe pas ou a été supprimé.
         </p>
+
         <Link
           href="/blog"
           className="inline-block bg-sky-700 hover:bg-sky-800 text-white px-6 py-3 rounded-lg transition"

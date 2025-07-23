@@ -19,7 +19,7 @@ export async function GET() {
     });
 
     return NextResponse.json(projects);
-  } catch (error) {
+  } catch{
     return NextResponse.json(
       { error: "Erreur lors de la récupération des projets" },
       { status: 500 }

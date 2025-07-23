@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { calculateReadTime } from "@/lib/utils";
@@ -36,7 +36,6 @@ export default function ArticleForm({
     register,
     handleSubmit,
     watch,
-    setValue,
     formState: { errors },
   } = useForm<ArticleFormType>({
     resolver: zodResolver(articleSchema),

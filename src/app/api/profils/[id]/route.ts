@@ -1,6 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
+interface Skill {
+  title: string;
+  description: string;
+  color: string;
+  svgPath: string;
+}
+
+interface Profile {
+  imagePath: string;
+  experience: string;
+  description: string;
+}
+
+interface HeroUpdateData {
+  name: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  profile: Profile;
+  skills: Skill[];
+}
+
 export async function GET(
   req: NextRequest,
   { params }: { params: { id: string } }
@@ -28,7 +50,6 @@ export async function GET(
   }
 }
 
-
 export async function PUT(
   req: NextRequest,
   { params }: { params: { id: string } }
@@ -44,7 +65,7 @@ export async function PUT(
       description,
       profile,
       skills,
-    } = await req.json();
+    } = (await req.json()) as HeroUpdateData;
 
     // Mise à jour du Hero
     const updatedHero = await prisma.hero.update({
@@ -62,8 +83,8 @@ export async function PUT(
           },
         },
         skills: {
-          deleteMany: {}, // supprime tous les skills existants
-          create: skills.map((skill: any) => ({
+          deleteMany: {}, // supprime tous les skills existants liés au hero
+          create: skills.map((skill) => ({
             title: skill.title,
             description: skill.description,
             color: skill.color,
@@ -84,7 +105,6 @@ export async function PUT(
   }
 }
 
-
 // DELETE: Supprimer un Hero + Profile + Skills
 export async function DELETE(
   req: NextRequest,
@@ -94,7 +114,6 @@ export async function DELETE(
   if (isNaN(id)) return NextResponse.json({ error: "ID invalide" }, { status: 400 });
 
   try {
-    // Récupérer le Hero pour obtenir le profileId associé
     const hero = await prisma.hero.findUnique({
       where: { id },
     });
@@ -103,13 +122,9 @@ export async function DELETE(
       return NextResponse.json({ error: "Héros non trouvé" }, { status: 404 });
     }
 
-    // Supprimer les skills liés
     await prisma.skill.deleteMany({ where: { heroId: id } });
-
-    // Supprimer le Hero
     await prisma.hero.delete({ where: { id } });
 
-    // Supprimer le profil s'il existe
     if (hero.profileId) {
       await prisma.profile.delete({ where: { id: hero.profileId } });
     }

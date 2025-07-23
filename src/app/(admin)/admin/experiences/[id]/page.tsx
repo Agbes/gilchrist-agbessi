@@ -29,7 +29,7 @@ export default function ViewExperience() {
         if (!res.ok) throw new Error("Erreur lors du chargement");
         const data = await res.json();
         setExperience(data);
-      } catch (err) {
+      } catch {
         setError("Impossible de charger cette expérience.");
       } finally {
         setLoading(false);
@@ -44,7 +44,9 @@ export default function ViewExperience() {
 
   return (
     <div className="max-w-3xl mx-auto mt-10 bg-white p-8 rounded-2xl shadow-xl">
-      <h1 className="text-2xl font-bold text-gray-800 mb-4">🧳 Détail de l'expérience</h1>
+      <h1 className="text-2xl font-bold text-gray-800 mb-4">
+        🧳 Détail de l&apos;expérience
+      </h1>
       <Image
         src={experience.imageUrl}
         alt={experience.name}

@@ -1,5 +1,3 @@
-import Header from "./Header";
-import StatsCards from "./StatsCards";
 import ArticleTable from "./ArticleTable";
 
 

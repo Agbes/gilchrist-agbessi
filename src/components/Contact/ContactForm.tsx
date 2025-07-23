@@ -46,8 +46,12 @@ export default function ContactForm() {
 
       setSuccess("✅ Message envoyé avec succès !");
       reset();
-    } catch (err: any) {
-      setError(err.message || "Erreur inconnue");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Erreur inconnue");
+      }
     }
   };
 
@@ -113,9 +117,8 @@ export default function ContactForm() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className={`w-full px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-lg transition-opacity ${
-            isSubmitting ? "opacity-50 cursor-not-allowed" : "hover:opacity-90"
-          }`}
+          className={`w-full px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-lg transition-opacity ${isSubmitting ? "opacity-50 cursor-not-allowed" : "hover:opacity-90"
+            }`}
         >
           {isSubmitting ? "Envoi en cours..." : "Envoyer le message"}
         </button>

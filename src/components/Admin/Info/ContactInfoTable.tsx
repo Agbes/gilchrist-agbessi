@@ -1,5 +1,5 @@
 "use client";
-import { FaLinkedinIn, FaTwitter, FaGithub, FaDribbble } from "react-icons/fa";
+import * as FaIcons from "react-icons/fa";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
@@ -103,7 +103,19 @@ export default function ContactInfoTable() {
               <td className="py-3 px-4">{info.type}</td>
               <td className="py-3 px-4">{info.label}</td>
               <td className="py-3 px-4 max-w-xs break-words">{info.value}</td>
-              <td className="py-3 px-4">{info.icon }</td>
+              <td className="py-3 px-4">
+                {
+                  (() => {
+                    const Icon = FaIcons[info.icon as keyof typeof FaIcons];
+                    return Icon ? (
+                      <Icon className="text-xl" style={{ color: info.color }} />
+                    ) : (
+                      <span>{info.icon}</span>
+                    );
+                  })()
+                }
+              </td>
+
               <td className="py-3 px-4">
                 <div
                   className="w-6 h-6 rounded-full border"

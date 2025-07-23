@@ -23,11 +23,16 @@ export default function ContactPage() {
                 if (!res.ok) throw new Error("Erreur lors du chargement");
                 const data = await res.json();
                 setMessages(data);
-            } catch (err: any) {
-                setError(err.message || "Erreur inconnue");
+            } catch (err: unknown) {
+                if (err instanceof Error) {
+                    setError(err.message);
+                } else {
+                    setError("Erreur inconnue");
+                }
             } finally {
                 setLoading(false);
             }
+
         };
 
         fetchMessages();
@@ -38,7 +43,7 @@ export default function ContactPage() {
         try {
             const res = await fetch(`/api/messages/${id}`, { method: "DELETE" });
 
-            
+
 
             if (res.ok) {
                 setMessages((prev) => prev.filter((msg) => msg.id !== id));

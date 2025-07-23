@@ -32,8 +32,12 @@ export default function TopicForm({ onSuccess }: TopicFormProps) {
 
       setName("");
       if (onSuccess) onSuccess();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Erreur inconnue");
+      }
     } finally {
       setLoading(false);
     }

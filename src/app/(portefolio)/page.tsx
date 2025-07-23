@@ -1,5 +1,4 @@
 import HomeSection from "@/components/CarouselComponents/HomeSection";
-import Image from "next/image";
 
 
 

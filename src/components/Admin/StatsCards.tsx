@@ -24,7 +24,7 @@ export default function StatsCards() {
           { title: "Messages reçus", value: data.messagesCount },
         ]);
         setError(null);
-      } catch (e) {
+      } catch {
         setError("Impossible de charger les statistiques");
       } finally {
         setLoading(false);

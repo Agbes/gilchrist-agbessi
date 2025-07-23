@@ -30,7 +30,6 @@ export default function EditSocialForm() {
     register,
     handleSubmit,
     setValue,
-    watch,
     reset,
     formState: { errors },
   } = useForm<FormValues>({
@@ -38,7 +37,6 @@ export default function EditSocialForm() {
     defaultValues: { name: "", icon: "", color: "", url: "" },
   });
 
-  const selectedName = watch("name");
 
   useEffect(() => {
     async function fetchData() {
@@ -55,11 +53,16 @@ export default function EditSocialForm() {
           color: data.color,
           url: data.url,
         });
-      } catch (error) {
-        alert("Erreur lors du chargement");
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          alert(`Erreur lors du chargement : ${error.message}`);
+        } else {
+          alert("Erreur lors du chargement");
+        }
       } finally {
         setLoading(false);
       }
+
     }
 
     fetchData();

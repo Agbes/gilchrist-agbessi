@@ -1,6 +1,6 @@
 // app/api/topics/route.ts
 import prisma from "@/lib/prisma";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 
 export async function POST(req: Request) {
@@ -21,14 +21,14 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json(topic, { status: 201 });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ message: "Erreur interne" }, { status: 500 });
   }
 }
 
 
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const topics = await prisma.topic.findMany({
       orderBy: { name: "asc" },

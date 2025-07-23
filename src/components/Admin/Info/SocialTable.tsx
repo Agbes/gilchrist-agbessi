@@ -1,5 +1,5 @@
 "use client";
-import { FaLinkedinIn, FaTwitter, FaGithub, FaDribbble } from "react-icons/fa";
+import * as FaIcons from "react-icons/fa";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
@@ -83,7 +83,13 @@ export default function SocialPlatformTable() {
           {platforms.map((p) => (
             <tr key={p.id} className="hover:bg-gray-50 border-b">
               <td className="py-3 px-4 font-medium">{p.name}</td>
-              <td className="py-3 px-4">{p.icon}</td>
+              <td className="py-3 px-4">
+                {(() => {
+                  const Icon = FaIcons[p.icon as keyof typeof FaIcons];
+                  return Icon ? <Icon className="text-xl text-gray-700" /> : <span>{p.icon}</span>;
+                })()}
+              </td>
+
               <td className="py-3 px-4">
                 <div
                   className="w-6 h-6 rounded-full border"

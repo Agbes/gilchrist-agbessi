@@ -25,7 +25,6 @@ export default function EditCompetence() {
   const {
     register,
     handleSubmit,
-    setValue,
     reset,
     formState: { errors },
   } = useForm<CompetenceFormData>({
@@ -44,7 +43,7 @@ export default function EditCompetence() {
         icon: data.icon,
         color: data.color,
         tagColor: data.tagColor,
-        tags: data.tags.map((t: any) => t.name).join(", "),
+        tags: data.tags.map((t: { name: string }) => t.name).join(", "),
       });
 
       setLoading(false);

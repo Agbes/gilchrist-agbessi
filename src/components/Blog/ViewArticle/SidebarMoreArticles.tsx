@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 interface SidebarMoreArticlesProps {
@@ -17,9 +18,11 @@ export default function SidebarMoreArticles({ articles }: SidebarMoreArticlesPro
         {articles.slice(0, 3).map((a) => (
           <li key={a.slug} className="flex gap-3 items-start">
             {a.images[0] && (
-              <img
+              <Image
                 src={a.images[0].url}
                 alt={a.title}
+                width={600}
+                height={300}
                 className="w-16 h-16 object-cover rounded-lg"
               />
             )}

@@ -51,20 +51,15 @@ export async function PUT(request: NextRequest, context: Params) {
     });
 
     return NextResponse.json(updated);
-  } catch (error) {
+  } catch{
     return NextResponse.json({ error: "Erreur lors de la mise à jour" }, { status: 500 });
   }
 }
 
-export async function DELETE(req: NextRequest, context: any) {
-  // Assurez-vous de récupérer les paramètres correctement
-  // Note: Next.js 13+ utilise `context.params` pour accéder aux paramètres de
-  // la route dynamique, donc nous devons attendre leur résolution.
-  // Si vous utilisez `params` directement, cela peut causer des problèmes.
-  // Note: Assurez-vous que `context.params` est défini avant de l'utiliser.
-  // await context.params avant d'extraire id
-
-  const params = await context.params;
+export async function DELETE(
+  _req: NextRequest,
+  { params }: { params: { id: string } }
+) {
   const id = parseInt(params.id);
 
   if (isNaN(id)) {
@@ -74,7 +69,7 @@ export async function DELETE(req: NextRequest, context: any) {
   try {
     await prisma.socialPlatform.delete({ where: { id } });
     return new NextResponse(null, { status: 204 });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Erreur lors de la suppression" }, { status: 500 });
   }
 }

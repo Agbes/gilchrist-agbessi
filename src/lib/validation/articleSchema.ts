@@ -90,3 +90,29 @@ export const formSchema = z.object({
   color: z.string(),
   url: z.string().url({ message: "URL invalide" }),
 });
+
+
+
+export const skillInputSchema = z.object({
+  title: z.string(),
+  description: z.string(),
+  color: z.string(),
+  svgPath: z.string(),
+});
+
+export const profileInputSchema = z.object({
+  imagePath: z.string(),
+  experience: z.string(),
+  description: z.string(),
+});
+
+export const heroInputSchema = z.object({
+  name: z.string(),
+  title: z.string(),
+  subtitle: z.string(),
+  description: z.string(),
+  profile: profileInputSchema,
+  skills: z.array(skillInputSchema),
+});
+
+export type HeroInput = z.infer<typeof heroInputSchema>;

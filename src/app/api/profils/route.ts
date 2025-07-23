@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { heroInputSchema } from "@/lib/validation/articleSchema";
 
 // GET: Tous les profils (résumé)
 export async function GET() {
@@ -25,18 +26,15 @@ export async function GET() {
 // POST: Créer un nouveau Hero complet
 export async function POST(req: NextRequest) {
   try {
-    const {
-      name,
-      title,
-      subtitle,
-      description,
-      profile,
-      skills,
-    } = await req.json();
+    const body = await req.json();
 
-    if (!name || !title || !subtitle || !description || !profile || !skills) {
-      return NextResponse.json({ error: "Champs manquants" }, { status: 400 });
+    // ✅ Validation avec Zod
+    const result = heroInputSchema.safeParse(body);
+    if (!result.success) {
+      return NextResponse.json({ error: "Champs invalides", details: result.error.errors }, { status: 400 });
     }
+
+    const { name, title, subtitle, description, profile, skills } = result.data;
 
     const newHero = await prisma.hero.create({
       data: {
@@ -52,7 +50,7 @@ export async function POST(req: NextRequest) {
           },
         },
         skills: {
-          create: skills.map((skill: any) => ({
+          create: skills.map((skill) => ({
             title: skill.title,
             description: skill.description,
             color: skill.color,

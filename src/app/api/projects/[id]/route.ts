@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { z } from "zod";
 import { updateProjectSchema } from "@/lib/validation/articleSchema";
 
 
@@ -20,9 +19,10 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       ...project,
       technologyNames: project.technologies.map((t) => t.name),
     });
-  } catch (error) {
-    return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
-  }
+  } catch {
+  return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
+}
+
 }
 
 
@@ -86,8 +86,9 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
   try {
     await prisma.project.delete({ where: { id } });
     return NextResponse.json({ message: "Projet supprimé avec succès" });
-  } catch (error: any) {
-    console.error("Erreur suppression projet :", error);
-    return NextResponse.json({ error: "Erreur suppression" }, { status: 500 });
-  }
+  } catch (error: unknown) {
+  console.error("Erreur suppression projet :", error);
+  return NextResponse.json({ error: "Erreur suppression" }, { status: 500 });
+}
+
 }

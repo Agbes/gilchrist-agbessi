@@ -25,7 +25,7 @@ export async function GET(_: NextRequest, context: { params: { id: string } }) {
       ...experience,
       serviceNames: experience.services.map(s => s.name),
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }
 }
@@ -53,10 +53,16 @@ export async function DELETE(_: NextRequest, context: { params: { id: string } }
     });
 
     return NextResponse.json({ message: "Expérience supprimée avec succès" });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Erreur suppression :", error);
 
-    if (error.code === "P2003") {
+    // On vérifie si error est un objet avec une propriété code
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      (error as { code?: string }).code === "P2003"
+    ) {
       return NextResponse.json(
         { error: "Impossible de supprimer : dépendances liées." },
         { status: 400 }
@@ -65,6 +71,7 @@ export async function DELETE(_: NextRequest, context: { params: { id: string } }
 
     return NextResponse.json({ error: "Erreur lors de la suppression" }, { status: 500 });
   }
+
 }
 
 export async function PATCH(req: NextRequest, context: { params: { id: string } }) {
