@@ -1,7 +1,6 @@
 import EditArticleClient from "@/components/Admin/Articles/EditArticleClient";
 import prisma from "@/lib/prisma";
 
-
 type Params = {
   params: {
     slug: string;
@@ -9,8 +8,7 @@ type Params = {
 };
 
 export default async function EditArticlePage({ params }: Params) {
-  const resolvedParams = await params;
-  const slug = resolvedParams.slug;
+  const { slug } = params;
 
   const topics = await prisma.topic.findMany({
     orderBy: { name: "asc" },
