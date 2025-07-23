@@ -8,7 +8,7 @@ type PageProps = {
   };
 };
 
-export default async function Page({ params }: PageProps) {
+export default async function EditArticlePage({ params }: PageProps) {
   const resolvedParams = await params;
   const slug = resolvedParams.slug;
 
