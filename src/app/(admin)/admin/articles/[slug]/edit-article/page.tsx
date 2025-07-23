@@ -2,13 +2,13 @@ import EditArticleClient from "@/components/Admin/Articles/EditArticleClient";
 import prisma from "@/lib/prisma";
 
 
-type PageProps = {
+type Params = {
   params: {
     slug: string;
   };
 };
 
-export default async function EditArticlePage({ params }: PageProps) {
+export default async function EditArticlePage({ params }: Params) {
   const resolvedParams = await params;
   const slug = resolvedParams.slug;
 
