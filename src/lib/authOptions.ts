@@ -135,7 +135,6 @@ export const authOptions: AuthOptions = {
         }
       }
 
-      console.log("🔑 JWT token final :", token);
       return token;
     },
 
