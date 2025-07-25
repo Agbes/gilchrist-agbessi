@@ -10,11 +10,12 @@ const socialPlatformSchema = z.object({
 });
 
 interface Params {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 // GET by ID
-export async function GET(_: NextRequest, { params }: Params) {
+export async function GET(_: NextRequest, props: Params) {
+  const params = await props.params;
   const id = parseInt(params.id);
   if (isNaN(id)) return NextResponse.json({ error: "ID invalide" }, { status: 400 });
 
@@ -56,10 +57,8 @@ export async function PUT(request: NextRequest, context: Params) {
   }
 }
 
-export async function DELETE(
-  _req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(_req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const id = parseInt(params.id);
 
   if (isNaN(id)) {

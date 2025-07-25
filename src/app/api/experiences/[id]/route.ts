@@ -2,13 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { experienceSchema, idSchema } from "@/lib/validation/articleSchema";
 
-export async function GET(_: NextRequest, context: { params: { id: string } }) {
-  const { params } = context;
+export async function GET(_: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const params = await context.params;
 
   // Valider id
   const idParsed = idSchema.safeParse(params);
   if (!idParsed.success) {
-    return NextResponse.json({ error: idParsed.error.errors[0].message }, { status: 400 });
+    return NextResponse.json(
+      { error: idParsed.error.issues[0].message },
+      { status: 400 }
+    );
   }
 
   try {
@@ -23,20 +26,20 @@ export async function GET(_: NextRequest, context: { params: { id: string } }) {
 
     return NextResponse.json({
       ...experience,
-      serviceNames: experience.services.map(s => s.name),
+      serviceNames: experience.services.map((s) => s.name),
     });
   } catch {
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }
 }
 
-export async function DELETE(_: NextRequest, context: { params: { id: string } }) {
-  const { params } = context;
+export async function DELETE(_: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const params = await context.params;
 
   // Valider id
   const idParsed = idSchema.safeParse(params);
   if (!idParsed.success) {
-    return NextResponse.json({ error: idParsed.error.errors[0].message }, { status: 400 });
+    return NextResponse.json({ error: idParsed.error.issues[0].message }, { status: 400 });
   }
 
   try {
@@ -56,7 +59,6 @@ export async function DELETE(_: NextRequest, context: { params: { id: string } }
   } catch (error: unknown) {
     console.error("Erreur suppression :", error);
 
-    // On vérifie si error est un objet avec une propriété code
     if (
       typeof error === "object" &&
       error !== null &&
@@ -71,16 +73,15 @@ export async function DELETE(_: NextRequest, context: { params: { id: string } }
 
     return NextResponse.json({ error: "Erreur lors de la suppression" }, { status: 500 });
   }
-
 }
 
-export async function PATCH(req: NextRequest, context: { params: { id: string } }) {
-  const { params } = context;
+export async function PATCH(req: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const params = await context.params;
 
   // Valider id
   const idParsed = idSchema.safeParse(params);
   if (!idParsed.success) {
-    return NextResponse.json({ error: idParsed.error.errors[0].message }, { status: 400 });
+    return NextResponse.json({ error: idParsed.error.issues[0].message }, { status: 400 });
   }
 
   try {
@@ -98,7 +99,7 @@ export async function PATCH(req: NextRequest, context: { params: { id: string } 
     const parseResult = experienceSchema.safeParse(rawData);
     if (!parseResult.success) {
       return NextResponse.json(
-        { error: parseResult.error.errors.map(e => e.message).join(", ") },
+        { error: parseResult.error.issues.map((e) => e.message).join(", ") },
         { status: 400 }
       );
     }
@@ -106,8 +107,8 @@ export async function PATCH(req: NextRequest, context: { params: { id: string } 
     const servicesArray = parseResult.data.services
       .toString()
       .split(",")
-      .map(s => s.trim().toLowerCase())
-      .filter(s => s.length > 0);
+      .map((s) => s.trim().toLowerCase())
+      .filter((s) => s.length > 0);
 
     const updatedExperience = await prisma.experience.update({
       where: { id: Number(params.id) },
@@ -118,7 +119,7 @@ export async function PATCH(req: NextRequest, context: { params: { id: string } 
         lieu: parseResult.data.lieu,
         services: {
           set: [],
-          connectOrCreate: servicesArray.map(name => ({
+          connectOrCreate: servicesArray.map((name) => ({
             where: { name },
             create: { name },
           })),

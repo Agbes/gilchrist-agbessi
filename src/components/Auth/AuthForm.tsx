@@ -2,8 +2,13 @@
 
 import { useForm } from "react-hook-form";
 
+type FormData = {
+  email: string;
+  password: string;
+};
+
 interface AuthFormProps {
-  onSubmit: (data: { email: string; password: string }) => void;
+  onSubmit: (data: FormData) => void;
 }
 
 export default function AuthForm({ onSubmit }: AuthFormProps) {
@@ -11,7 +16,7 @@ export default function AuthForm({ onSubmit }: AuthFormProps) {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm<FormData>();
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -26,7 +31,7 @@ export default function AuthForm({ onSubmit }: AuthFormProps) {
           {...register("email", { required: "Email requis" })}
         />
         {errors.email && (
-          <p className="text-red-500 text-sm mt-1">{errors.email.message as string}</p>
+          <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
         )}
       </div>
 
@@ -41,7 +46,7 @@ export default function AuthForm({ onSubmit }: AuthFormProps) {
           {...register("password", { required: "Mot de passe requis" })}
         />
         {errors.password && (
-          <p className="text-red-500 text-sm mt-1">{errors.password.message as string}</p>
+          <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
         )}
       </div>
 

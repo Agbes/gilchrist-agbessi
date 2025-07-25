@@ -56,11 +56,16 @@ export default function EditArticleClient({ slug, topics }: { slug: string; topi
 
   return (
     <ArticleForm
-      initialData={initialData}
+      initialData={{
+        ...initialData,
+        topicId: initialData.topicId.toString(),
+        tags: typeof initialData.tags === "string" ? initialData.tags : (initialData.tags?.join(", ") ?? ""),
+      }}
       onSubmit={handleSubmit}
       loading={saving}
       buttonLabel="Mettre à jour"
       topics={topics}
     />
+
   );
 }

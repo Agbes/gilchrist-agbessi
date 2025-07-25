@@ -26,11 +26,11 @@ export const idSchema = z.object({
 });
 
 export const experienceSchema = z.object({
-  name: z.string().min(1, "Le nom est requis"),
-  periode: z.string().min(1, "La période est requise"),
-  description: z.string().min(1, "La description est requise"),
-  lieu: z.string().min(1, "Le lieu est requis"),
-  services: z.string().optional(), // chaîne CSV, optionnelle
+  name: z.string().min(1, "Nom requis"),
+  periode: z.string().min(1, "Période requise"),
+  description: z.string().min(1, "Description requise"),
+  lieu: z.string().min(1, "Lieu requis"),
+  services: z.string().default(""), // services est toujours une string, même vide
 });
 
 export const competenceSchema = z.object({

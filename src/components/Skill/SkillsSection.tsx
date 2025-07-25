@@ -29,8 +29,24 @@ type Competence = {
 };
 
 export default async function SkillsSection() {
-  const skills: Competence[] = await prisma.competence.findMany({
+  const skillsFromDb = await prisma.competence.findMany({
     include: { tags: true },
+  });
+
+  const skills: Competence[] = skillsFromDb.map((skill) => {
+    const iconKey = skill.icon as IconKey;
+    if (!(iconKey in iconMap)) {
+      throw new Error(`Icône inconnue : ${skill.icon}`);
+    }
+    return {
+      id: skill.id,
+      title: skill.title,
+      description: skill.description,
+      icon: iconKey,
+      color: skill.color,
+      tagColor: skill.tagColor,
+      tags: skill.tags,
+    };
   });
 
   return (
@@ -43,20 +59,17 @@ export default async function SkillsSection() {
           </span>
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {skills.map((skill) => {
-            const IconComponent = iconMap[skill.icon];
-            return (
-              <SkillCard
-                key={skill.id}
-                color={skill.color}
-                icon={IconComponent ? <IconComponent size={24} /> : null}
-                title={skill.title}
-                description={skill.description}
-                tags={skill.tags.map((t) => t.name)}
-                tagColor={skill.tagColor}
-              />
-            );
-          })}
+          {skills.map((skill) => (
+            <SkillCard
+              key={skill.id}
+              color={skill.color}
+              icon={skill.icon} // on passe la clé, pas le composant React
+              title={skill.title}
+              description={skill.description}
+              tags={skill.tags.map((t) => t.name)}
+              tagColor={skill.tagColor}
+            />
+          ))}
         </div>
       </div>
     </section>

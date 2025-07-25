@@ -2,12 +2,13 @@ import ProfilView from "@/components/Admin/Hero/ProfilDetails";
 import prisma from "@/lib/prisma";
 
 type Params = {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 };
 
-export default async function ProfilPage({ params }: Params) {
+export default async function ProfilPage(props: Params) {
+  const params = await props.params;
   const { id } = params;
 
   const hero = await prisma.hero.findUnique({

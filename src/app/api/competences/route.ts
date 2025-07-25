@@ -51,8 +51,12 @@ export async function POST(req: Request) {
     return NextResponse.json(newCompetence, { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ message: "Données invalides", issues: error.errors }, { status: 400 });
+      return NextResponse.json(
+        { message: "Données invalides", issues: error.issues },
+        { status: 400 }
+      );
     }
+
     console.error("Erreur création compétence :", error);
     return NextResponse.json({ message: "Erreur création compétence" }, { status: 500 });
   }

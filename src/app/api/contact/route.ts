@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       // 🛑 Erreurs de validation
-      const message = error.errors.map((e) => e.message).join(" / ");
+      const message = error.issues.map((e) => e.message).join(" / ");
       return NextResponse.json({ error: message }, { status: 400 });
     }
 

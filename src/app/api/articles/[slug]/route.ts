@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { articleBodySchema } from "@/lib/validation/articleSchema";
 
-export async function GET(_: NextRequest, context: { params: { slug: string } }) {
-  const { slug } = context.params;
+export async function GET(_: NextRequest, context: { params: Promise<{ slug: string }> }) {
+  const { slug } = (await context.params);
 
   if (!slug) {
     return NextResponse.json({ error: "Slug manquant" }, { status: 400 });
@@ -34,8 +34,8 @@ export async function GET(_: NextRequest, context: { params: { slug: string } })
   }
 }
 
-export async function DELETE(_: NextRequest, context: { params: { slug: string } }) {
-  const { slug } = context.params;
+export async function DELETE(_: NextRequest, context: { params: Promise<{ slug: string }> }) {
+  const { slug } = (await context.params);
 
   try {
     const article = await prisma.article.findUnique({
@@ -70,8 +70,8 @@ export async function DELETE(_: NextRequest, context: { params: { slug: string }
 
 }
 
-export async function PATCH(req: NextRequest, context: { params: { slug: string } }) {
-  const { slug } = context.params;
+export async function PATCH(req: NextRequest, context: { params: Promise<{ slug: string }> }) {
+  const { slug } = (await context.params);
 
   try {
     const json = await req.json();

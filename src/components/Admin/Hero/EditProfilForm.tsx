@@ -5,6 +5,8 @@ import { useRouter, useParams } from "next/navigation";
 import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Resolver } from "react-hook-form";
+
 
 const skillSchema = z.object({
   title: z.string().min(1, "Titre requis"),
@@ -32,24 +34,25 @@ export default function EditProfilForm() {
   const id = params.id as string;
   const [newImage, setNewImage] = useState<File | null>(null);
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    control,
-    formState: {isSubmitting },
-  } = useForm<FormSchema>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-      title: "",
-      subtitle: "",
-      description: "",
-      experience: 0,
-      profileDescription: "",
-      skills: [],
-    },
-  });
+const {
+  register,
+  handleSubmit,
+  reset,
+  control,
+  formState: { isSubmitting },
+} = useForm<FormSchema>({
+    resolver: zodResolver(formSchema) as Resolver<FormSchema>,
+  defaultValues: {
+    name: "",
+    title: "",
+    subtitle: "",
+    description: "",
+    experience: 0,
+    profileDescription: "",
+    skills: [],
+  },
+});
+
 
   const { fields, append, replace } = useFieldArray({
     control,

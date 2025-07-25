@@ -15,7 +15,7 @@ export async function GET() {
     });
 
     return NextResponse.json(experiences);
-  } catch  {
+  } catch {
     return NextResponse.json(
       { error: "Erreur lors de la récupération des expériences" },
       { status: 500 }
@@ -27,7 +27,6 @@ export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
 
-    // Récupérer les champs
     const rawData = {
       name: formData.get("name"),
       periode: formData.get("periode"),
@@ -36,43 +35,38 @@ export async function POST(req: NextRequest) {
       services: formData.get("services") || "",
     };
 
-    // Valider les données (hors image)
     const parseResult = experienceSchema.safeParse(rawData);
     if (!parseResult.success) {
       return NextResponse.json(
-        { error: parseResult.error.errors.map(e => e.message).join(", ") },
+        {
+          error: parseResult.error.issues.map((e) => e.message).join(", "),
+        },
         { status: 400 }
       );
     }
 
     const files = formData.getAll("image") as File[];
     if (files.length === 0) {
-      return NextResponse.json(
-        { error: "Image obligatoire" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Image obligatoire" }, { status: 400 });
     }
 
-    // Traitement des services (CSV -> tableau)
     const servicesArray = parseResult.data.services
       .toString()
       .split(",")
-      .map(s => s.trim().toLowerCase())
-      .filter(s => s.length > 0);
+      .map((s) => s.trim().toLowerCase())
+      .filter((s) => s.length > 0);
 
-    // Sauvegarde des fichiers
     const savedImageUrls = await saveUploadedFiles(files);
 
-    // Création en BDD
     const experience = await prisma.experience.create({
       data: {
         name: parseResult.data.name,
         periode: parseResult.data.periode,
         description: parseResult.data.description,
         lieu: parseResult.data.lieu,
-        imageUrl: savedImageUrls[0], // obligatoire, on prend la première image
+        imageUrl: savedImageUrls[0],
         services: {
-          connectOrCreate: servicesArray.map(name => ({
+          connectOrCreate: servicesArray.map((name) => ({
             where: { name },
             create: { name },
           })),

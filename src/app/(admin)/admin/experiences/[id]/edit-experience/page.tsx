@@ -207,7 +207,10 @@ export default function EditExperience() {
               </label>
             )}
           />
-          {errors.image && <p className="text-red-600 text-sm mt-1">{errors.image.message}</p>}
+          {errors.image && typeof errors.image.message === "string" && (
+  <p className="text-red-600 text-sm mt-1">{errors.image.message}</p>
+)}
+
         </div>
 
         <div className="pt-4">

@@ -23,10 +23,8 @@ interface HeroUpdateData {
   skills: Skill[];
 }
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const id = parseInt(params.id);
   if (isNaN(id)) return NextResponse.json({ error: "ID invalide" }, { status: 400 });
 
@@ -50,10 +48,8 @@ export async function GET(
   }
 }
 
-export async function PUT(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const id = parseInt(params.id);
   if (isNaN(id)) return NextResponse.json({ error: "ID invalide" }, { status: 400 });
 
@@ -78,7 +74,7 @@ export async function PUT(
         profile: {
           update: {
             imagePath: profile.imagePath,
-            experience: profile.experience,
+            experience: parseInt(profile.experience),
             description: profile.description,
           },
         },
@@ -106,10 +102,8 @@ export async function PUT(
 }
 
 // DELETE: Supprimer un Hero + Profile + Skills
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const id = parseInt(params.id);
   if (isNaN(id)) return NextResponse.json({ error: "ID invalide" }, { status: 400 });
 

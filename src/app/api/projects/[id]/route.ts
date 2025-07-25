@@ -3,7 +3,8 @@ import prisma from "@/lib/prisma";
 import { updateProjectSchema } from "@/lib/validation/articleSchema";
 
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const id = Number(params.id);
   if (isNaN(id)) return NextResponse.json({ error: "ID invalide" }, { status: 400 });
 
@@ -20,13 +21,13 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       technologyNames: project.technologies.map((t) => t.name),
     });
   } catch {
-  return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
+    return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
+  }
 }
 
-}
 
-
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const id = Number(params.id);
   if (isNaN(id)) return NextResponse.json({ error: "ID invalide" }, { status: 400 });
 
@@ -45,13 +46,13 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     const parseResult = updateProjectSchema.safeParse(rawData);
     if (!parseResult.success) {
       return NextResponse.json(
-        { error: parseResult.error.errors.map(e => e.message).join(", ") },
+        { error: parseResult.error.issues.map(e => e.message) },
         { status: 400 }
       );
     }
 
     // Construire les technologies pour Prisma
-    const techArray = parseResult.data.technologies.map(name => name.toLowerCase());
+    const techArray = (parseResult.data.technologies ?? []).map(name => name.toLowerCase());
 
     const project = await prisma.project.update({
       where: { id },
@@ -79,7 +80,8 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 }
 
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const id = Number(params.id);
   if (isNaN(id)) return NextResponse.json({ error: "ID invalide" }, { status: 400 });
 
@@ -87,8 +89,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
     await prisma.project.delete({ where: { id } });
     return NextResponse.json({ message: "Projet supprimé avec succès" });
   } catch (error: unknown) {
-  console.error("Erreur suppression projet :", error);
-  return NextResponse.json({ error: "Erreur suppression" }, { status: 500 });
-}
-
+    console.error("Erreur suppression projet :", error);
+    return NextResponse.json({ error: "Erreur suppression" }, { status: 500 });
+  }
 }

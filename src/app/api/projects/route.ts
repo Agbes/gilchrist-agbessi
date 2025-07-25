@@ -19,7 +19,7 @@ export async function GET() {
     });
 
     return NextResponse.json(projects);
-  } catch{
+  } catch {
     return NextResponse.json(
       { error: "Erreur lors de la récupération des projets" },
       { status: 500 }
@@ -47,7 +47,9 @@ export async function POST(req: NextRequest) {
 
     if (!parseResult.success) {
       return NextResponse.json(
-        { error: parseResult.error.errors.map((e) => e.message).join(", ") },
+        {
+          error: parseResult.error.issues.map(issue => issue.message)
+        },
         { status: 400 }
       );
     }
@@ -61,9 +63,9 @@ export async function POST(req: NextRequest) {
 
     const techArray = rawTechnos
       ? String(rawTechnos)
-          .split(",")
-          .map((t) => t.trim().toLowerCase())
-          .filter((t) => t.length > 0)
+        .split(",")
+        .map((t) => t.trim().toLowerCase())
+        .filter((t) => t.length > 0)
       : [];
 
     const project = await prisma.project.create({

@@ -3,6 +3,7 @@
 import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Resolver } from "react-hook-form";
 
 const skillSchema = z.object({
   title: z.string().min(1, "Titre requis"),
@@ -34,7 +35,7 @@ export default function CreateProfilForm() {
     reset,
     formState: { errors, isSubmitting },
   } = useForm<FormSchema>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(formSchema) as Resolver<FormSchema>,
     defaultValues: {
       name: "",
       title: "",
@@ -42,8 +43,9 @@ export default function CreateProfilForm() {
       description: "",
       experience: 0,
       profileDescription: "",
-      image: undefined,
-      skills: [{ title: "", description: "", color: "", svgPath: "" }],
+      skills: [
+        { title: "", description: "", color: "#000000", svgPath: "" },
+      ],
     },
   });
 
@@ -56,17 +58,24 @@ export default function CreateProfilForm() {
     try {
       const file = data.image[0];
 
+      // Préparer FormData pour upload image
+      const fd = new FormData();
+      fd.append("file", file);
+
+      // Upload image (adapter URL et logique selon ton API)
       const uploadRes = await fetch("/api/upload", {
         method: "POST",
-        body: (() => {
-          const fd = new FormData();
-          fd.append("file", file);
-          return fd;
-        })(),
+        body: fd,
       });
+
+      if (!uploadRes.ok) {
+        alert("Erreur lors de l'upload de l'image");
+        return;
+      }
 
       const { imagePath } = await uploadRes.json();
 
+      // Construire l'objet profil à envoyer
       const profil = {
         name: data.name,
         title: data.title,
@@ -80,6 +89,7 @@ export default function CreateProfilForm() {
         skills: data.skills,
       };
 
+      // Envoyer le profil à ton API
       const res = await fetch("/api/profils", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -88,7 +98,7 @@ export default function CreateProfilForm() {
 
       if (res.ok) {
         alert("Héros créé avec succès !");
-        reset();
+        reset(); // ✅ fonctionne ici
       } else {
         alert("Erreur lors de la création");
       }
@@ -133,7 +143,9 @@ export default function CreateProfilForm() {
                 accept="image/*"
                 className="input file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"
               />
-              <p className="text-red-500 text-sm">{errors.image?.message}</p>
+              <p className="text-red-500 text-sm">
+                {typeof errors.image?.message === "string" ? errors.image.message : null}
+              </p>
             </div>
             <div>
               <input

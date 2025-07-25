@@ -10,14 +10,19 @@ const contactInfoSchema = z.object({
   color: z.string().min(1),
 });
 
-export async function GET(req: NextRequest, context: { params?: Promise<{ id: string }> }) {
-  if (!context.params) return NextResponse.json({ error: "Paramètres manquants" }, { status: 400 });
-  const params = await context.params;
-  const id = parseInt(params.id);
-  if (isNaN(id)) return NextResponse.json({ error: "ID invalide" }, { status: 400 });
+type Params = {
+params: Promise<{ id: string }>
+};
+
+export async function GET(req: NextRequest, { params }: Params) {
+  const resolvedParams = await params;
+  const { id } = resolvedParams;
+
+  const idInt = parseInt(id);
+  if (isNaN(idInt)) return NextResponse.json({ error: "ID invalide" }, { status: 400 });
 
   try {
-    const info = await prisma.contactInfo.findUnique({ where: { id } });
+    const info = await prisma.contactInfo.findUnique({ where: { id : idInt } });
     if (!info) return NextResponse.json({ error: "Non trouvé" }, { status: 404 });
 
     return NextResponse.json(info);
@@ -26,11 +31,13 @@ export async function GET(req: NextRequest, context: { params?: Promise<{ id: st
   }
 }
 
-export async function PUT(req: NextRequest, context: { params?: Promise<{ id: string }> }) {
-  if (!context.params) return NextResponse.json({ error: "Paramètres manquants" }, { status: 400 });
-  const params = await context.params;
-  const id = parseInt(params.id);
-  if (isNaN(id)) return NextResponse.json({ error: "ID invalide" }, { status: 400 });
+export async function PUT(req: NextRequest, { params }: Params) {
+  const resolvedParams = await params;
+  const { id } = resolvedParams;
+
+  const idInt = parseInt(id);
+
+  if (isNaN(idInt)) return NextResponse.json({ error: "ID invalide" }, { status: 400 });
 
   try {
     const body = await req.json();
@@ -40,7 +47,7 @@ export async function PUT(req: NextRequest, context: { params?: Promise<{ id: st
     }
 
     const updated = await prisma.contactInfo.update({
-      where: { id },
+      where: { id : idInt },
       data: parsed.data,
     });
 
@@ -50,14 +57,16 @@ export async function PUT(req: NextRequest, context: { params?: Promise<{ id: st
   }
 }
 
-export async function DELETE(req: NextRequest, context: { params?: Promise<{ id: string }> }) {
-  if (!context.params) return NextResponse.json({ error: "Paramètres manquants" }, { status: 400 });
-  const params = await context.params;
-  const id = parseInt(params.id);
-  if (isNaN(id)) return NextResponse.json({ error: "ID invalide" }, { status: 400 });
+export async function DELETE(req: NextRequest, { params }: Params) {
+  const resolvedParams = await params;
+  const { id } = resolvedParams;
+
+  const idInt = parseInt(id);
+
+  if (isNaN(idInt)) return NextResponse.json({ error: "ID invalide" }, { status: 400 });
 
   try {
-    await prisma.contactInfo.delete({ where: { id } });
+    await prisma.contactInfo.delete({ where: { id : idInt } });
     return new NextResponse(null, { status: 204 });
   } catch {
     return NextResponse.json({ error: "Erreur lors de la suppression" }, { status: 500 });

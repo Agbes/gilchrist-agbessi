@@ -2,12 +2,13 @@ import ArticleView from "@/components/Admin/ViewArticle/ArticleView";
 import prisma from "@/lib/prisma";
 
 type Params = {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 };
 
-export default async function ArticlePage({ params }: Params) {
+export default async function ArticlePage(props: Params) {
+  const params = await props.params;
   const { slug } = params;
 
   const articleFromDb = await prisma.article.findUnique({

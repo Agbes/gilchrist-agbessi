@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
     // ✅ Validation avec Zod
     const result = heroInputSchema.safeParse(body);
     if (!result.success) {
-      return NextResponse.json({ error: "Champs invalides", details: result.error.errors }, { status: 400 });
+      return NextResponse.json({ error: "Champs invalides", details: result.error.issues }, { status: 400 });
     }
 
     const { name, title, subtitle, description, profile, skills } = result.data;
@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
         profile: {
           create: {
             imagePath: profile.imagePath,
-            experience: profile.experience,
+            experience: parseInt(profile.experience),
             description: profile.description,
           },
         },
