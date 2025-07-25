@@ -9,9 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@clerk/localizations": "^3.18.0",
-    "@clerk/nextjs": "^6.25.4",
-    "@faker-js/faker": "^9.9.0",
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",

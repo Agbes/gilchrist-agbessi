@@ -1,23 +1,9 @@
-import EditArticleClient from "@/components/Admin/Articles/EditArticleClient";
-import prisma from "@/lib/prisma";
+import EditArticleSection from "@/components/Admin/Articles/EditArticleSection";
 
-type Params = {
-  params: {
-    slug: string;
-  };
-};
 
-export default async function EditArticlePage({ params }: Params) {
-  const { slug } = params;
 
-  const topics = await prisma.topic.findMany({
-    orderBy: { name: "asc" },
-  });
-
-  return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Modifier un article</h1>
-      <EditArticleClient slug={slug} topics={topics} />
-    </div>
-  );
+export default async function EditArticlePage({ params }: {params: Promise<{ slug: string }>}) {
+      const resolvedParams = await params;
+      const { slug } = resolvedParams;
+  return <EditArticleSection slug={slug} />;
 }
