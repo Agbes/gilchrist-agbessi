@@ -9,83 +9,30 @@ import { generateArticleMetadata } from "@/lib/metadata";
 import { metadataBase } from "@/lib/constants";
 import { Prisma } from "@prisma/client";
 
-// ✅ Typage complet pour l'article avec toutes les relations incluses
-type FullArticleWithAll = Prisma.ArticleGetPayload<{
-    include: {
-        images: true;
-        topic: true;
-        keywords: {
-            include: {
-                keyword: true;
-            };
-        };
-    };
-}>;
-
 export const dynamicParams = true;
 
+// ✅ Typage complet pour l'article avec les relations
+type FullArticleWithAll = Prisma.ArticleGetPayload<{
+  include: {
+    images: true;
+    topic: true;
+    keywords: {
+      include: {
+        keyword: true;
+      };
+    };
+  };
+}>;
 
-
-
-// Génère les métadonnées SEO avec URLs absolues
+// ✅ Métadonnées SEO
 export async function generateMetadata({
-    params,
-}: {
-    params: Promise<{ slug: string }>;
-}): Promise<Metadata> {
-    const { slug } = await params;
-
-    const article: FullArticleWithAll | null = await prisma.article.findUnique({
-        where: { slug },
-        include: {
-            images: true,
-            topic: true,
-            keywords: {
-                include: {
-                    keyword: true,
-                },
-            },
-        },
-    });
-
-    if (!article) return {};
-
-    const imageUrl =
-        article.images?.[0]?.url?.startsWith("http")
-            ? article.images[0].url
-            : `${metadataBase}${article.images?.[0]?.url || "/default-image.jpg"}`;
-
-    return generateArticleMetadata({
-        title: article.title,
-        description: article.description || article.description?.slice(0, 150),
-        slug: `/blog/${slug}`,
-        image: imageUrl,
-        author: "Gilchrist AGBESSI",
-        keywords: article.keywords?.map((k) => k.keyword.name) || [],
-    });
-}
-
-
-// Génère les routes statiques pour SSG
-export async function generateStaticParams() {
-    const articles = await prisma.article.findMany({
-        select: { slug: true },
-    });
-
-    return articles.map((article) => ({
-        slug: article.slug,
-    }));
-}
-
-// Composant principal de la page article
-export default async function ArticlePage({
   params,
 }: {
   params: Promise<{ slug: string }>;
-}) {
+}): Promise<Metadata> {
   const { slug } = await params;
 
-  const article: FullArticleWithAll | null = await prisma.article.findUnique({
+  const article = (await prisma.article.findUnique({
     where: { slug },
     include: {
       images: true,
@@ -96,7 +43,56 @@ export default async function ArticlePage({
         },
       },
     },
+  })) as FullArticleWithAll | null;
+
+  if (!article) return {};
+
+  const imageUrl =
+    article.images?.[0]?.url?.startsWith("http")
+      ? article.images[0].url
+      : `${metadataBase}${article.images?.[0]?.url || "/default-image.jpg"}`;
+
+  return generateArticleMetadata({
+    title: article.title,
+    description: article.description || article.description?.slice(0, 150),
+    slug: `/blog/${slug}`,
+    image: imageUrl,
+    author: "Gilchrist AGBESSI",
+    keywords: article.keywords?.map((k) => k.keyword.name) || [],
   });
+}
+
+// ✅ SSG : génération des routes
+export async function generateStaticParams() {
+  const articles = await prisma.article.findMany({
+    select: { slug: true },
+  });
+
+  return articles.map((article) => ({
+    slug: article.slug,
+  }));
+}
+
+// ✅ Page principale
+export default async function ArticlePage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+
+  const article = (await prisma.article.findUnique({
+    where: { slug },
+    include: {
+      images: true,
+      topic: true,
+      keywords: {
+        include: {
+          keyword: true,
+        },
+      },
+    },
+  })) as FullArticleWithAll | null;
 
   if (!article) return notFound();
 
