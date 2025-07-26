@@ -7,22 +7,12 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { generateArticleMetadata } from "@/lib/metadata";
 import { metadataBase } from "@/lib/constants";
-import { Prisma } from "@prisma/client";
+
+
 
 export const dynamicParams = true;
 
-// ✅ Typage complet pour l'article avec les relations
-type FullArticleWithAll = Prisma.ArticleGetPayload<{
-  include: {
-    images: true;
-    topic: true;
-    keywords: {
-      include: {
-        keyword: true;
-      };
-    };
-  };
-}>;
+
 
 // ✅ Métadonnées SEO
 export async function generateMetadata({
@@ -32,18 +22,14 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
 
-  const article = (await prisma.article.findUnique({
+  const article = await prisma.article.findUnique({
     where: { slug },
     include: {
       images: true,
       topic: true,
-      keywords: {
-        include: {
-          keyword: true,
-        },
-      },
+      keywords: true, // simple inclusion des mots-clés
     },
-  })) as FullArticleWithAll | null;
+  });
 
   if (!article) return {};
 
@@ -58,11 +44,11 @@ export async function generateMetadata({
     slug: `/blog/${slug}`,
     image: imageUrl,
     author: "Gilchrist AGBESSI",
-    keywords: article.keywords?.map((k) => k.keyword.name) || [],
+    keywords: article.keywords?.map((k) => k.name) || [],
   });
 }
 
-// ✅ SSG : génération des routes
+// ✅ SSG : génération des routes statiques
 export async function generateStaticParams() {
   const articles = await prisma.article.findMany({
     select: { slug: true },
@@ -73,7 +59,7 @@ export async function generateStaticParams() {
   }));
 }
 
-// ✅ Page principale
+// ✅ Page principale Article
 export default async function ArticlePage({
   params,
 }: {
@@ -81,18 +67,14 @@ export default async function ArticlePage({
 }) {
   const { slug } = await params;
 
-  const article = (await prisma.article.findUnique({
+  const article = await prisma.article.findUnique({
     where: { slug },
     include: {
       images: true,
       topic: true,
-      keywords: {
-        include: {
-          keyword: true,
-        },
-      },
+      keywords: true, // inclusion mots-clés simple
     },
-  })) as FullArticleWithAll | null;
+  });
 
   if (!article) return notFound();
 
@@ -103,7 +85,7 @@ export default async function ArticlePage({
     include: { images: true },
   });
 
-  const keywordNames = article.keywords?.map((k) => k.keyword.name) || [];
+  const keywordNames = article.keywords?.map((k) => k.name) || [];
 
   const jsonLd = {
     "@context": "https://schema.org",

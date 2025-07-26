@@ -141,7 +141,7 @@ model Article {
   description String
   date        DateTime       @default(now())
   readTime    String
-  keywords    ArticleKeyword[] // table pivot
+  keywords    Keyword[]
   topicId     Int
   topic       Topic    @relation(fields: [topicId], references: [id])
   images      ArticleImage[]
@@ -153,18 +153,9 @@ model Article {
 model Keyword {
   id        Int               @id @default(autoincrement())
   name      String            @unique
-  articles  ArticleKeyword[]  
+  articles  Article[] // relation inverse many-to-many implicite
+
 }
-
-model ArticleKeyword {
-  id        Int      @id @default(autoincrement())
-  article   Article  @relation(fields: [articleId], references: [id])
-  articleId Int
-
-  keyword   Keyword  @relation(fields: [keywordId], references: [id])
-  keywordId Int
-}
-
 model TagArticle {
   id        Int        @id @default(autoincrement())
   name      String     @unique
