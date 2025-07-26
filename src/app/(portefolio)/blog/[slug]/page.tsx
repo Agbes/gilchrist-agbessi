@@ -7,9 +7,23 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { generateArticleMetadata } from "@/lib/metadata";
 import { metadataBase } from "@/lib/constants";
+import { Prisma } from "@prisma/client";
 
-// Indique que la route est dynamique (params est une promesse)
+// ✅ Typage complet pour l'article avec toutes les relations incluses
+type FullArticleWithAll = Prisma.ArticleGetPayload<{
+    include: {
+        images: true;
+        topic: true;
+        keywords: {
+            include: {
+                keyword: true;
+            };
+        };
+    };
+}>;
+
 export const dynamicParams = true;
+
 
 
 
@@ -19,13 +33,13 @@ export async function generateMetadata({
 }: {
     params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-    const resolvedParams = await params;  // <- attends ici
-    const { slug } = resolvedParams;
+    const { slug } = await params;
 
-    const article = await prisma.article.findUnique({
+    const article: FullArticleWithAll | null = await prisma.article.findUnique({
         where: { slug },
         include: {
             images: true,
+            topic: true,
             keywords: {
                 include: {
                     keyword: true,
@@ -51,6 +65,7 @@ export async function generateMetadata({
     });
 }
 
+
 // Génère les routes statiques pour SSG
 export async function generateStaticParams() {
     const articles = await prisma.article.findMany({
@@ -64,96 +79,89 @@ export async function generateStaticParams() {
 
 // Composant principal de la page article
 export default async function ArticlePage({
-    params,
+  params,
 }: {
-    params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string }>;
 }) {
-    const resolvedParams = await params;  // <-- attendre ici
-    const { slug } = resolvedParams;
+  const { slug } = await params;
 
-    const article = await prisma.article.findUnique({
-        where: { slug },
+  const article: FullArticleWithAll | null = await prisma.article.findUnique({
+    where: { slug },
+    include: {
+      images: true,
+      topic: true,
+      keywords: {
         include: {
-            images: true,
-            topic: true,
-            keywords: {
-                include: {
-                    keyword: true,
-                },
-            },
+          keyword: true,
         },
-    });
+      },
+    },
+  });
 
-    if (!article) return notFound();
+  if (!article) return notFound();
 
-    const moreArticles = await prisma.article.findMany({
-        where: { slug: { not: slug } },
-        take: 3,
-        orderBy: { createdAt: "desc" },
-        include: { images: true },
-    });
+  const moreArticles = await prisma.article.findMany({
+    where: { slug: { not: slug } },
+    take: 3,
+    orderBy: { createdAt: "desc" },
+    include: { images: true },
+  });
 
-    // Extraction des noms de mots-clés
-    const keywordNames = article.keywords?.map((k) => k.keyword.name) || [];
+  const keywordNames = article.keywords?.map((k) => k.keyword.name) || [];
 
-    // JSON-LD pour SEO Schema.org
-    const jsonLd = {
-        "@context": "https://schema.org",
-        "@type": "Article",
-        headline: article.title,
-        description: article.description || article.description?.slice(0, 150),
-        image:
-            article.images?.[0]?.url?.startsWith("http")
-                ? article.images[0].url
-                : `${metadataBase}${article.images?.[0]?.url || "/default-image.jpg"}`,
-        author: {
-            "@type": "Person",
-            name: "Gilchrist AGBESSI",
-            url: "https://gilchrist-agbessi.onrender.com",
-        },
-        datePublished: article.createdAt.toISOString(),
-        dateModified: article.updatedAt.toISOString(),
-        mainEntityOfPage: {
-            "@type": "WebPage",
-            "@id": `${metadataBase}/blog/${slug}`,
-        },
-    };
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: article.title,
+    description: article.description || article.description?.slice(0, 150),
+    image:
+      article.images?.[0]?.url?.startsWith("http")
+        ? article.images[0].url
+        : `${metadataBase}${article.images?.[0]?.url || "/default-image.jpg"}`,
+    author: {
+      "@type": "Person",
+      name: "Gilchrist AGBESSI",
+      url: "https://gilchrist-agbessi.onrender.com",
+    },
+    datePublished: article.createdAt.toISOString(),
+    dateModified: article.updatedAt.toISOString(),
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `${metadataBase}/blog/${slug}`,
+    },
+  };
 
-    return (
-        <>
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <div className="min-h-screen py-30 bg-gray-50 text-gray-800 p-6">
+        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-10">
+          {/* Contenu principal */}
+          <main className="flex-1 flex flex-col gap-8">
+            <ArticleContent
+              article={{
+                title: article.title,
+                description: article.description,
+                topic: article.topic.name,
+                date: article.createdAt.toISOString(),
+                readTime: article.readTime,
+                images: article.images.map((img) => ({ url: img.url })),
+              }}
             />
-            <div className="min-h-screen py-30 bg-gray-50 text-gray-800 p-6">
-                <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-10">
+            <div className="divider"></div>
+            <MoreArticlesSection articles={moreArticles} />
+          </main>
 
-                    {/* Contenu principal - article + more articles */}
-                    <main className="flex-1 flex flex-col gap-8">
-                        <ArticleContent
-                            article={{
-                                title: article.title,
-                                description: article.description,
-                                topic: article.topic.name,
-                                date: article.createdAt.toISOString(), // <-- correction ici
-                                readTime: article.readTime,
-                                images: article.images.map((img) => ({ url: img.url })),
-                            }}
-                        />
-
-                        <div className="divider"></div>
-                        <MoreArticlesSection articles={moreArticles} />
-                    </main>
-
-                    {/* Sidebar à droite */}
-                    <aside className="w-full lg:w-80 space-y-8 bg-sky-950 p-6 rounded-md flex-shrink-0">
-                        <SidebarTopics />
-                        <SidebarKeywords keywords={keywordNames} />
-                    </aside>
-
-                </div>
-            </div>
-        </>
-    );
-
+          {/* Sidebar */}
+          <aside className="w-full lg:w-80 space-y-8 bg-sky-950 p-6 rounded-md flex-shrink-0">
+            <SidebarTopics />
+            <SidebarKeywords keywords={keywordNames} />
+          </aside>
+        </div>
+      </div>
+    </>
+  );
 }
