@@ -141,7 +141,6 @@ model Article {
   description String
   date        DateTime       @default(now())
   readTime    String
-  keywords    Keyword[]
   topicId     Int
   topic       Topic    @relation(fields: [topicId], references: [id])
   images      ArticleImage[]
@@ -150,12 +149,9 @@ model Article {
   updatedAt   DateTime       @updatedAt
 }
 
-model Keyword {
-  id        Int               @id @default(autoincrement())
-  name      String            @unique
-  articles  Article[] // relation inverse many-to-many implicite
 
-}
+
+
 model TagArticle {
   id        Int        @id @default(autoincrement())
   name      String     @unique

@@ -27,7 +27,7 @@ export async function generateMetadata({
     include: {
       images: true,
       topic: true,
-      keywords: true, // simple inclusion des mots-clés
+      tags: true, // ✅ On utilise les tags maintenant
     },
   });
 
@@ -44,7 +44,7 @@ export async function generateMetadata({
     slug: `/blog/${slug}`,
     image: imageUrl,
     author: "Gilchrist AGBESSI",
-    keywords: article.keywords?.map((k) => k.name) || [],
+    keywords: article.tags?.map((tag) => tag.name) || [],
   });
 }
 
@@ -72,7 +72,7 @@ export default async function ArticlePage({
     include: {
       images: true,
       topic: true,
-      keywords: true, // inclusion mots-clés simple
+      tags: true, // ✅ On utilise les tags ici aussi
     },
   });
 
@@ -85,7 +85,7 @@ export default async function ArticlePage({
     include: { images: true },
   });
 
-  const keywordNames = article.keywords?.map((k) => k.name) || [];
+  const tagNames = article.tags?.map((tag) => tag.name) || [];
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -136,7 +136,7 @@ export default async function ArticlePage({
           {/* Sidebar */}
           <aside className="w-full lg:w-80 space-y-8 bg-sky-950 p-6 rounded-md flex-shrink-0">
             <SidebarTopics />
-            <SidebarKeywords keywords={keywordNames} />
+            <SidebarKeywords keywords={tagNames} />
           </aside>
         </div>
       </div>
