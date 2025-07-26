@@ -10,14 +10,15 @@ const links = [
   { href: "/contact", label: "Contact" },
 ];
 
-export default function NavbarLinks() {
+export default function NavbarLinks({ onLinkClick }: { onLinkClick?: () => void }) {
   return (
     <>
       {links.map((link) => (
         <Link
           key={link.href}
           href={link.href}
-          className="nav-link hover:text-blue-400 transition-colors whitespace-nowrap"
+          className="py-1 hover:border-b-2 hover:border-blue-500 focus:border-b-2 focus:border-blue-500 active:border-b-2 active:border-blue-500 transition-all duration-200 whitespace-nowrap"
+          onClick={onLinkClick}
         >
           {link.label}
         </Link>

@@ -1,19 +1,17 @@
 import ArticleContent from "@/components/Blog/ViewArticle/ArticleContent";
-import SidebarMoreArticles from "@/components/Blog/ViewArticle/SidebarMoreArticles";
+import MoreArticlesSection from "@/components/Blog/ViewArticle/MoreArticlesSection";
 import SidebarTopics from "@/components/Blog/ViewArticle/SidebarTopics";
+import SidebarKeywords from "@/components/Blog/ViewArticle/SidebarKeywords";
 import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import { generateArticleMetadata } from "@/lib/metadata";
 import { metadataBase } from "@/lib/constants";
-
-
 
 // Indique que la route est dynamique (params est une promesse)
 export const dynamicParams = true;
 
-interface ArticlePageProps {
-    params: Promise<{ slug: string }>;
-}
+
 
 // Génère les métadonnées SEO avec URLs absolues
 export async function generateMetadata({
@@ -21,11 +19,19 @@ export async function generateMetadata({
 }: {
     params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-    const { slug } = await params;
+    const resolvedParams = await params;  // <- attends ici
+    const { slug } = resolvedParams;
 
     const article = await prisma.article.findUnique({
         where: { slug },
-        include: { images: true },
+        include: {
+            images: true,
+            keywords: {
+                include: {
+                    keyword: true,
+                },
+            },
+        },
     });
 
     if (!article) return {};
@@ -35,21 +41,14 @@ export async function generateMetadata({
             ? article.images[0].url
             : `${metadataBase}${article.images?.[0]?.url || "/default-image.jpg"}`;
 
-    return {
+    return generateArticleMetadata({
         title: article.title,
         description: article.description || article.description?.slice(0, 150),
-        openGraph: {
-            title: article.title,
-            description: article.description || article.description?.slice(0, 150),
-            type: "article",
-            images: [
-                {
-                    url: imageUrl,
-                    alt: article.title,
-                },
-            ],
-        },
-    };
+        slug: `/blog/${slug}`,
+        image: imageUrl,
+        author: "Gilchrist AGBESSI",
+        keywords: article.keywords?.map((k) => k.keyword.name) || [],
+    });
 }
 
 // Génère les routes statiques pour SSG
@@ -64,17 +63,26 @@ export async function generateStaticParams() {
 }
 
 // Composant principal de la page article
-export default async function ArticlePage({ params }: ArticlePageProps) {
-    const { slug } = await params;
+export default async function ArticlePage({
+    params,
+}: {
+    params: Promise<{ slug: string }>;
+}) {
+    const resolvedParams = await params;  // <-- attendre ici
+    const { slug } = resolvedParams;
 
     const article = await prisma.article.findUnique({
         where: { slug },
         include: {
             images: true,
-            topic: true, // 👈 ajouter ça
+            topic: true,
+            keywords: {
+                include: {
+                    keyword: true,
+                },
+            },
         },
     });
-
 
     if (!article) return notFound();
 
@@ -84,6 +92,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         orderBy: { createdAt: "desc" },
         include: { images: true },
     });
+
+    // Extraction des noms de mots-clés
+    const keywordNames = article.keywords?.map((k) => k.keyword.name) || [];
 
     // JSON-LD pour SEO Schema.org
     const jsonLd = {
@@ -97,7 +108,8 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                 : `${metadataBase}${article.images?.[0]?.url || "/default-image.jpg"}`,
         author: {
             "@type": "Person",
-            name: "Ton Nom ou Auteur",
+            name: "Gilchrist AGBESSI",
+            url: "https://gilchrist-agbessi.onrender.com",
         },
         datePublished: article.createdAt.toISOString(),
         dateModified: article.updatedAt.toISOString(),
@@ -114,23 +126,34 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
             <div className="min-h-screen py-30 bg-gray-50 text-gray-800 p-6">
-                <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-10">
-                    <ArticleContent
-                        article={{
-                            title: article.title,
-                            description: article.description,
-                            topic: article.topic.name, // 👈 on extrait le nom
-                            date: article.date.toISOString(),
-                            readTime: article.readTime,
-                            images: article.images.map((img) => ({ url: img.url })),
-                        }}
-                    />
-                    <aside className="space-y-8 bg-sky-950">
+                <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-10">
+
+                    {/* Contenu principal - article + more articles */}
+                    <main className="flex-1 flex flex-col gap-8">
+                        <ArticleContent
+                            article={{
+                                title: article.title,
+                                description: article.description,
+                                topic: article.topic.name,
+                                date: article.createdAt.toISOString(), // <-- correction ici
+                                readTime: article.readTime,
+                                images: article.images.map((img) => ({ url: img.url })),
+                            }}
+                        />
+
+                        <div className="divider"></div>
+                        <MoreArticlesSection articles={moreArticles} />
+                    </main>
+
+                    {/* Sidebar à droite */}
+                    <aside className="w-full lg:w-80 space-y-8 bg-sky-950 p-6 rounded-md flex-shrink-0">
                         <SidebarTopics />
-                        <SidebarMoreArticles articles={moreArticles} />
+                        <SidebarKeywords keywords={keywordNames} />
                     </aside>
+
                 </div>
             </div>
         </>
     );
+
 }

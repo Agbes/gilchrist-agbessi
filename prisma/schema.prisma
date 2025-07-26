@@ -141,12 +141,28 @@ model Article {
   description String
   date        DateTime       @default(now())
   readTime    String
+  keywords    ArticleKeyword[] // table pivot
   topicId     Int
   topic       Topic    @relation(fields: [topicId], references: [id])
   images      ArticleImage[]
   tags        TagArticle[]   @relation("ArticleTags")  // <-- ajouté ici
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
+}
+
+model Keyword {
+  id        Int               @id @default(autoincrement())
+  name      String            @unique
+  articles  ArticleKeyword[]  
+}
+
+model ArticleKeyword {
+  id        Int      @id @default(autoincrement())
+  article   Article  @relation(fields: [articleId], references: [id])
+  articleId Int
+
+  keyword   Keyword  @relation(fields: [keywordId], references: [id])
+  keywordId Int
 }
 
 model TagArticle {
