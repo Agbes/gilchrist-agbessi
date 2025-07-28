@@ -14,6 +14,8 @@ export default async function HeroContent() {
           Gilchrist AGBESSI
         </span>
       </h1>
+      <div className="divider divider-primary">********</div>
+
       <h2 className="text-2xl md:text-3xl mb-6 text-blue-100">
         {hero.title}
       </h2>
