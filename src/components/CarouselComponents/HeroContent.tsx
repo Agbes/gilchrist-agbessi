@@ -21,7 +21,7 @@ export default async function HeroContent() {
         {hero.description}
       </p>
       <div className="flex justify-center gap-4">
-        <Link href="/projects" className="btn btn-soft btn-primary">
+        <Link href="/projects" className="btn btn-accent">
           Voir mes projets
         </Link>
         <Link href="/contact" className="btn btn-info">
@@ -31,10 +31,10 @@ export default async function HeroContent() {
           href="/cv/cv-gilchrist-agbessi.pdf"
           target="_blank"
           rel="noopener noreferrer"
-          className="btn btn-info flex items-center gap-2"
+          className="btn btn-succes"
         >
           <span>Mon CV</span>
-          <svg className="btn btn-success" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
           </svg>
         </Link>
