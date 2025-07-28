@@ -13,7 +13,6 @@ import { metadataBase } from "@/lib/constants";
 export const dynamicParams = true;
 
 
-
 // ✅ Métadonnées SEO
 export async function generateMetadata({
   params,

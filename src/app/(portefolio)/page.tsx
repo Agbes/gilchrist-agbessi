@@ -14,7 +14,6 @@ export const metadata: Metadata = generateMetadata({
 
 
 
-
 export default function Home() {
   return <HomeSection />;
 }
