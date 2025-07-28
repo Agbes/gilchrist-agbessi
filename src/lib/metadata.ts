@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-
-const baseUrl = "https://gilchrist-agbessi.onrender.com";
+import {metadataBase} from "@/lib/constants";
 const defaultImage = "/og-gilchrist.png";
 
 type MetadataParams = {
@@ -9,7 +8,7 @@ type MetadataParams = {
   slug?: string;
   image?: string;
   keywords?: string[];
-  other?: Record<string, string>; // ✅ Ajout ici
+  other?: Record<string, string>;
 };
 
 export function generateMetadata({
@@ -20,7 +19,7 @@ export function generateMetadata({
   keywords = [],
   other,
 }: MetadataParams): Metadata {
-  const fullUrl = `${baseUrl}${slug.startsWith("/") ? slug : `/${slug}`}`;
+  const fullUrl = `${metadataBase}${slug.startsWith("/") ? slug : `/${slug}`}`;
 
   return {
     title,
@@ -32,12 +31,15 @@ export function generateMetadata({
       "développeur web",
       ...keywords,
     ],
-    metadataBase: new URL(baseUrl),
-    authors: [{ name: "Gilchrist AGBESSI", url: baseUrl }],
+    metadataBase: new URL(metadataBase),
+    authors: [{ name: "Gilchrist AGBESSI", url: metadataBase }],
     creator: "Gilchrist AGBESSI",
     robots: {
       index: true,
       follow: true,
+    },
+    alternates: {
+      canonical: fullUrl,
     },
     openGraph: {
       title,
@@ -63,6 +65,67 @@ export function generateMetadata({
       images: [image],
       creator: "@gilosnell",
     },
-    other, // ✅ Ajout ici
+    other,
+  };
+}
+
+
+// ✅ Variante spécifique pour les articles
+export function generateArticleMetadata({
+  title,
+  description,
+  slug = "",
+  image = defaultImage,
+  keywords = [],
+  author = "Gilchrist AGBESSI",
+  other,
+}: MetadataParams & { author?: string }): Metadata {
+  const fullUrl = `${metadataBase}${slug.startsWith("/") ? slug : `/${slug}`}`;
+
+  return {
+    title,
+    description,
+    keywords: [
+      "Gilchrist",
+      "AGBESSI",
+      "Gilchrist AGBESSI",
+      "développeur web",
+      ...keywords,
+    ],
+    metadataBase: new URL(metadataBase),
+    authors: [{ name: author, url: metadataBase }],
+    creator: author,
+    robots: {
+      index: true,
+      follow: true,
+    },
+    alternates: {
+      canonical: fullUrl,
+    },
+    openGraph: {
+      title,
+      description,
+      url: fullUrl,
+      siteName: "Portfolio Gilchrist AGBESSI",
+      images: [
+        {
+          url: image,
+          width: 1200,
+          height: 630,
+          alt: `Image de l'article: ${title}`,
+          type: "image/png",
+        },
+      ],
+      locale: "fr_FR",
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [image],
+      creator: "@gilosnell",
+    },
+    other,
   };
 }
