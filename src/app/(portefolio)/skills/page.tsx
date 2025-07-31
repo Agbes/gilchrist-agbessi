@@ -1,7 +1,32 @@
-import SkillsSection from '@/components/Skill/SkillsSection';
+import SkillsSection from "@/components/Skill/SkillsSection";
+import prisma from "@/lib/prisma";
+import { generateMetadata } from "@/lib/metadata";
+import type { Metadata } from "next";
 
-import { generateMetadata } from '@/lib/metadata';
-import type { Metadata } from 'next';
+type Tag = {
+  id: number;
+  name: string;
+};
+
+type CompetenceFromDb = {
+  id: number;
+  title: string;
+  description: string;
+  icon: string; // string type
+  color: string;
+  tagColor: string;
+  tags?: Tag[];
+};
+
+type Competence = {
+  id: number;
+  title: string;
+  description: string;
+  iconKey: string; // renamed to avoid confusion
+  color: string;
+  tagColor: string;
+  tags: string[];
+};
 
 export const metadata: Metadata = generateMetadata({
   title: "Compétences | Gilchrist - Développeur Web & Mathématicien",
@@ -20,6 +45,20 @@ export const metadata: Metadata = generateMetadata({
   ],
 });
 
-export default function SkillsPage() {
-  return <SkillsSection />;
+export default async function SkillsPage() {
+  const skillsFromDb: CompetenceFromDb[] = await prisma.competence.findMany({
+    include: { tags: true },
+  });
+
+  const skills: Competence[] = skillsFromDb.map((skill) => ({
+    id: skill.id,
+    title: skill.title,
+    description: skill.description,
+    iconKey: skill.icon,
+    color: skill.color,
+    tagColor: skill.tagColor,
+    tags: skill.tags?.map((t) => t.name) ?? [],
+  }));
+
+  return <SkillsSection skills={skills} />;
 }

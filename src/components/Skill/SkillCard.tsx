@@ -1,51 +1,38 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faCode,
-  faServer,
-  faPaintBrush,
-  faMobileAlt,
-  faCloud,
-  faChartLine,
-} from '@fortawesome/free-solid-svg-icons';
+"use client";
 
-const iconMap = {
-  'fa-code': faCode,
-  'fa-server': faServer,
-  'fa-paint-brush': faPaintBrush,
-  'fa-mobile-alt': faMobileAlt,
-  'fa-cloud': faCloud,
-  'fa-chart-line': faChartLine,
-};
+import React from "react";
 
-interface SkillCardProps {
+type SkillCardProps = {
   color: string;
-  icon: keyof typeof iconMap;
+  icon: React.ElementType;
   title: string;
   description: string;
-  tags: string[];
+  tags?: string[];
   tagColor: string;
-}
+};
 
 export default function SkillCard({
   color,
-  icon,
+  icon: Icon,
   title,
   description,
-  tags,
+  tags = [],
   tagColor,
 }: SkillCardProps) {
   return (
-    <div className="bg-slate-800 rounded-xl p-6 hover:shadow-xl transition duration-300">
-      <div className={`w-14 h-14 ${color} rounded-full flex items-center justify-center mb-4`}>
-        <FontAwesomeIcon icon={iconMap[icon]} className="text-white text-2xl" />
+    <div className="bg-slate-800 rounded-2xl p-6 flex flex-col justify-between shadow hover:shadow-xl transition duration-300 group">
+      <div className="flex items-center gap-4 mb-4">
+        <div className={`w-14 h-14 ${color} rounded-full flex items-center justify-center`}>
+          <Icon className="text-white text-2xl" />
+        </div>
+        <h3 className="text-xl font-bold text-white group-hover:text-blue-400 transition">{title}</h3>
       </div>
-      <h3 className="text-xl font-semibold mb-3">{title}</h3>
-      <p className="text-slate-400 mb-4">{description}</p>
-      <div className="flex flex-wrap gap-2">
+      <p className="text-slate-400 text-sm mb-4 flex-1">{description}</p>
+      <div className="flex flex-wrap gap-2 mt-auto">
         {tags.map((tag, index) => (
           <span
             key={index}
-            className={`px-3 py-1 rounded-full text-sm ${tagColor}`}
+            className={`px-3 py-1 rounded-full text-xs font-medium ${tagColor} bg-opacity-20`}
           >
             {tag}
           </span>

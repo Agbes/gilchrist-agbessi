@@ -17,8 +17,8 @@ export default function NavbarLinks({ onLinkClick }: { onLinkClick?: () => void 
         <Link
           key={link.href}
           href={link.href}
-          className="py-1 hover:border-b-2 hover:border-blue-500 focus:border-b-2 focus:border-blue-500 active:border-b-2 active:border-blue-500 transition-all duration-200 whitespace-nowrap"
           onClick={onLinkClick}
+          className="px-2 py-1 text-sm font-medium text-white hover:text-blue-400 transition-colors duration-200 border-b-2 border-transparent hover:border-blue-400"
         >
           {link.label}
         </Link>

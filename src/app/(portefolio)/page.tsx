@@ -18,4 +18,3 @@ export default function Home() {
   return <HomeSection />;
 }
 
-<meta name="google-site-verification" content="" />

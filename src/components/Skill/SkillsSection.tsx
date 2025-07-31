@@ -1,54 +1,27 @@
-import { FaCode, FaServer, FaPaintBrush, FaMobileAlt, FaCloud, FaChartLine } from "react-icons/fa";
+"use client";
+
+import * as FaIcons from "react-icons/fa";
 import SkillCard from "@/components/Skill/SkillCard";
-import prisma from "@/lib/prisma";
-
-type Tag = {
-  id: number;
-  name: string;
-};
-
-const iconMap = {
-  "fa-code": FaCode,
-  "fa-server": FaServer,
-  "fa-paint-brush": FaPaintBrush,
-  "fa-mobile-alt": FaMobileAlt,
-  "fa-cloud": FaCloud,
-  "fa-chart-line": FaChartLine,
-} as const;
-
-type IconKey = keyof typeof iconMap;
+import { ElementType } from "react";
 
 type Competence = {
   id: number;
   title: string;
   description: string;
-  icon: IconKey;
+  iconKey: string;
   color: string;
   tagColor: string;
-  tags: Tag[];
+  tags: string[];
 };
 
-export default async function SkillsSection() {
-  const skillsFromDb = await prisma.competence.findMany({
-    include: { tags: true },
-  });
+function iconKeyToComponentName(iconKey: string): string {
+  return iconKey
+    .split("-")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join("");
+}
 
-  const skills: Competence[] = skillsFromDb.map((skill) => {
-    const iconKey = skill.icon as IconKey;
-    if (!(iconKey in iconMap)) {
-      throw new Error(`Icône inconnue : ${skill.icon}`);
-    }
-    return {
-      id: skill.id,
-      title: skill.title,
-      description: skill.description,
-      icon: iconKey,
-      color: skill.color,
-      tagColor: skill.tagColor,
-      tags: skill.tags,
-    };
-  });
-
+export default function SkillsSection({ skills }: { skills: Competence[] }) {
   return (
     <section id="skills" className="py-20 bg-slate-900">
       <div className="container mx-auto px-6">
@@ -58,18 +31,26 @@ export default async function SkillsSection() {
             compétences
           </span>
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {skills.map((skill) => (
-            <SkillCard
-              key={skill.id}
-              color={skill.color}
-              icon={skill.icon} // on passe la clé, pas le composant React
-              title={skill.title}
-              description={skill.description}
-              tags={skill.tags.map((t) => t.name)}
-              tagColor={skill.tagColor}
-            />
-          ))}
+        <div className="flex flex-wrap justify-center gap-8">
+          {skills.map((skill) => {
+            const componentName = iconKeyToComponentName(skill.iconKey);
+            const Icon = (FaIcons as Record<string, ElementType>)[componentName];
+
+            if (!Icon) return null;
+
+            return (
+              <div key={skill.id} className="w-full sm:w-[45%] lg:w-[30%]">
+                <SkillCard
+                  color={skill.color}
+                  icon={Icon}
+                  title={skill.title}
+                  description={skill.description}
+                  tags={skill.tags}
+                  tagColor={skill.tagColor}
+                />
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>

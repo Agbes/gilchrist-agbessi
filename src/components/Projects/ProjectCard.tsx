@@ -6,7 +6,7 @@ interface ProjectCardProps {
   nature: string;
   description: string;
   language: string[];
-  imageUrl: string; // ✅ Nouvelle prop
+  imageUrl: string;
 }
 
 export default function ProjectCard({

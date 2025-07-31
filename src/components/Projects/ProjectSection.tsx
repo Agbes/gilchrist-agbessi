@@ -1,7 +1,7 @@
 // components/ProjectSection.tsx
 import Link from "next/link";
 import ProjectCard from "./ProjectCard";
-import prisma from "@/lib/prisma"; // 🔁 adapter le chemin selon ton projet
+import prisma from "@/lib/prisma";
 
 export default async function ProjectSection() {
   const projects = await prisma.project.findMany({

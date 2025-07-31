@@ -16,41 +16,41 @@ export default function DaisyCarouselAutoplay() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrent((prev) => (prev + 1) % images.length);
-    }, 4000);
+    }, 5000); // 5 sec d'intervalle
     return () => clearInterval(interval);
   }, []);
 
   const getAltText = (imagePath: string) => {
     const fileName = imagePath.split("/").pop() || "";
     return fileName
-      .replace(/\.[^/.]+$/, "") // remove extension
-      .replace(/[-_]/g, " ") // replace dashes/underscores with spaces
-      .replace(/^AGBESSI/i, "AGBESSI"); // capitalize if needed
+      .replace(/\.[^/.]+$/, "")
+      .replace(/[-_]/g, " ")
+      .replace(/^AGBESSI/i, "AGBESSI");
   };
 
   return (
-    <div className="carousel w-full h-screen relative overflow-hidden">
+    <div className="relative w-full h-screen overflow-hidden">
       {images.map((image, index) => (
         <div
           key={index}
-          id={`slide${index + 1}`}
-          className={`carousel-item w-full h-full transition-opacity duration-1000 ${
-            index === current
-              ? "opacity-100 relative"
-              : "opacity-0 absolute top-0 left-0"
+          className={`absolute inset-0 w-full h-full transition-opacity duration-[1500ms] ease-in-out ${
+            index === current ? "opacity-100 z-10" : "opacity-0 z-0"
           }`}
         >
           <Image
             src={image}
             alt={getAltText(image)}
             fill
-            sizes="100vw 100vh"
+            sizes="100vw"
             style={{ objectFit: "cover" }}
             priority={index === 0}
-            className="opacity-50"
+            className="transition-opacity duration-1000"
           />
         </div>
       ))}
+
+      {/* Optional: overlay gradient to darken bottom */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-20 pointer-events-none" />
     </div>
   );
 }
